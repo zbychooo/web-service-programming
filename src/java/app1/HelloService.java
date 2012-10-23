@@ -11,7 +11,7 @@ import javax.ws.rs.GET;
 public class HelloService {
     @GET
     public String sayHello(){
-        return "Hello world";
+        return "Hello world and something more!!";
     }
     
 }
