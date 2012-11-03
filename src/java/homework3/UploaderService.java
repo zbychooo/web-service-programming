@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,7 +41,7 @@ public class UploaderService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("text/plain")
     public InputStream uploadAndShow(@FormDataParam("file") InputStream in, 
-        @FormDataParam("file") FormDataContentDisposition info) throws FileAlreadyExistsException{
+        @FormDataParam("file") FormDataContentDisposition info) throws FileAlreadyExistsException, Exception{
         
         String path = PATH + info.getFileName();
         File file = new File(path);
@@ -48,6 +49,16 @@ public class UploaderService {
         if(file.exists()) {
             throw new FileAlreadyExistsException(file.getName());
         }
+        
+        // ---------------------------------------------------------------------
+        if(! (file.getName().endsWith(".txt"))) {
+            throw new Exception("This is NOT a text file...");
+        }
+        
+        //TYP, JAK ROZPOZNAC POPRAWNIE!
+        System.out.println("Mime Type of " + file.getName() + " is " +
+                         new MimetypesFileTypeMap().getContentType(file));
+        // ---------------------------------------------------------------------
         
         try {
             OutputStream out = new FileOutputStream(file);
