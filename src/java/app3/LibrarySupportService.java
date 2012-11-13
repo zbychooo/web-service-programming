@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
  *
  * @author Atuan
  */
-@Path("/libsupport")
+@Path("/libsupportApp3")
 public class LibrarySupportService {
     
     @GET

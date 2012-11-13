@@ -14,7 +14,7 @@ import javax.ws.rs.FormParam;
  *
  * @author Atuan
  */
-@Path("/library")
+@Path("/libraryApp3")
 public class LibraryService {
     
     public LibraryService(){
