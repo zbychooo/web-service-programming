@@ -17,3 +17,5 @@ build/web/WEB-INF/classes/.netbeans_update_resources
 build/web/WEB-INF/classes/.netbeans_automatic_build
 build/web/META-INF/context.xml
 build/web/META-INF/MANIFEST.MF
+build/web/WEB-INF/classes/com/rest/model/User.class
+build/web/WEB-INF/classes/com/rest/model/System.class
