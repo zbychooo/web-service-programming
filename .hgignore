@@ -1,0 +1,8 @@
+syntax: glob
+nbproject/project.xml
+nbproject/project.properties
+nbproject/private/private.properties
+nbproject/genfiles.properties
+nbproject/build-impl.xml
+nbproject/ant-deploy.xml
+build.xml
