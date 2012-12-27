@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.utilities;
 
 /**
- *
+ * Temporal class to run and test the DBConnector class methods.
  * @author Zbyszko
  */
 public class DBConnectorTester {
