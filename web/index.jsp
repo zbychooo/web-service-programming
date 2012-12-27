@@ -13,5 +13,7 @@
     </head>
     <body>
         <h1>Hello World!</h1>
+        <a href="register.jsp">REGISTER</a> |
+        <a href="login.jsp">LOGIN</a>
     </body>
 </html>
