@@ -41,8 +41,8 @@ public class UserService {
             @FormParam("password") String password) {
         
         UsersController usersController = new UsersController();
-        usersController.verifyCredentials(login, password);
+        String out = usersController.verifyCredentials(login, password);
         
-        return null;
+        return Response.ok().entity(out).build();
     }
 }

@@ -118,9 +118,6 @@ public class UsersController {
         if((user == null) || (!user.getPassword().equals(password))){
             return ErrorsController.INVALID_CREDENTIALS;
         }
-        
-        
         return "OK";
-        
     }
 }
