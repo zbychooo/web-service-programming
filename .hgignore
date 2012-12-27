@@ -32,5 +32,3 @@ build/web/WEB-INF/classes/com/rest/controller/UsersController.class
 build/web/WEB-INF/classes/com/rest/controller/ErrorsController.class
 build/web/WEB-INF/classes/com/rest/client/NewClass.class
 build/generated-sources/rest/org/netbeans/rest/application/config/ApplicationConfig.java
-build/web/register.jsp
-build/web/login.jsp
