@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.utilities;
 
 import com.mysql.jdbc.Connection;
@@ -11,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * External database credentials and connection methods
  * @author Zbyszko
  */
 public class DBConnector {
@@ -24,6 +20,10 @@ public class DBConnector {
     //---------------------------------------------------------
     private Connection connection;
 
+    /**
+     * Checks if database connection is possible
+     * @return 
+     */
     public boolean isConnection() {
         
         try {
@@ -52,12 +52,22 @@ public class DBConnector {
         return true;
     }
 
+    /**
+     * Connects to database.
+     * @return Connection Object.
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName(driverName);
         connection = (Connection) DriverManager.getConnection(url, uid, pwd);
         return connection;
     }
 
+    /**
+     * Closes the database connection.
+     * @throws SQLException 
+     */
     public void closeConnection() throws SQLException {
         connection.close();
     }

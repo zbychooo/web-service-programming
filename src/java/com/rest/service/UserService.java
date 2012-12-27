@@ -4,7 +4,7 @@
  */
 package com.rest.service;
 
-import com.rest.controller.UserController;
+import com.rest.controller.UsersController;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,7 +23,7 @@ public class UserService {
                             @FormParam("confirm_password") String confirmPassword,
                             @FormParam("username") String username) {
         
-        int returnCode = UserController.checkUser(login, password, confirmPassword, username);
+        String returnMessage = UsersController.checkUser(login, password, confirmPassword, username);
         
         return null;
     }
