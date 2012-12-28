@@ -37,7 +37,7 @@ public class Hash {
     }
 
     /**
-     * String hashinh using md5 hash function
+     * String hashing using md5 hash function.
      * @param input String to hash
      * @return Hashed string
      */

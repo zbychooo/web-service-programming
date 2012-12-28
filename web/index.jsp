@@ -11,9 +11,9 @@
         </div>
         <div id="accountManagement">
             <a href="register.jsp">REGISTER</a> |
-            <a href="login.jsp">LOGIN</a>
-        </div>
-        <div id="content">
+        <a href="login.jsp">LOGIN</a> |
+        <a href="rest/hello/sayHello">say Hello</a> |
+        <a href="rest/hello/sayBye">say Bye</a>
             
         </div>
         <div id="footer">

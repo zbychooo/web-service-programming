@@ -1,7 +1,7 @@
 package com.rest.model;
 
 /**
- *
+ * User model class.
  * @author Zbyszko
  */
 public class User {
@@ -10,12 +10,22 @@ public class User {
     private String login;
     private String password;
     private String username;
+    private String role;
 
-    public User(Long uid, String login, String password, String username) {
+    public User(Long uid, String login, String password, String username, String role) {
         this.uid = uid;
         this.login = login;
         this.password = password;
         this.username = username;
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Long getUid() {
@@ -44,7 +54,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "uid=" + uid + ", login=" + login + ", password=" + password + ", username=" + username + '}';
+        return "User{" + "uid=" + uid + ", login=" + login + ", password=" + password + ", username=" + username + ", role=" + role + '}';
     }
-    
+       
 }
