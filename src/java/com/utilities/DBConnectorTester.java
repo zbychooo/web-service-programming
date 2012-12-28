@@ -1,13 +1,9 @@
 package com.utilities;
 
-/**
- * Temporal class to run and test the DBConnector class methods.
- * @author Zbyszko
- */
 public class DBConnectorTester {
     
     public static void main(String[] args) {
-        System.out.println("Hello");
+        System.out.println("Tester,");
         
                
         //DBConnector db = new DBConnector();
@@ -15,6 +11,6 @@ public class DBConnectorTester {
 
         String s = "userpass";
         String sOut = Hash.md5(s);
-        System.out.println("sOut: " + sOut);
+        System.out.println("out: " + sOut);
     }
 }

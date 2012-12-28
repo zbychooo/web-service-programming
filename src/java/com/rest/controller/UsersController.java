@@ -34,7 +34,8 @@ public class UsersController {
                    users.put(
                            rs.getString("login"), 
                            new User(rs.getLong("id"), rs.getString("login"), 
-                                rs.getString("password"), rs.getString("username"))
+                                rs.getString("password"), rs.getString("username"),
+                                rs.getString("role"))
                            );
                    lastId = rs.getLong("id");
                }
@@ -91,16 +92,18 @@ public class UsersController {
         password = Hash.SHA1(password);
         try {
             lastId += 1;
-            User user = new User(lastId, login, password, username);
+            User user = new User(lastId, login, password, username, "user");
+            //role=user by default...
             users.put(login, user);
             
             DBConnector db = new DBConnector();
             
-            String sqlQuery = "insert into users(login, password, username) values(?,?,?)";
+            String sqlQuery = "insert into users(login, password, username, role) values(?,?,?,?)";
             try(PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)){
                 statement.setString(1, user.getLogin());
                 statement.setString(2, user.getPassword());
                 statement.setString(3, user.getUsername());
+                statement.setString(4, user.getRole());
                 statement.executeUpdate();
                 statement.close();
             }
