@@ -1,9 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : 2012-12-20, 18:11:55
-    Author     : Zbyszko
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,8 +6,18 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <a href="register.jsp">REGISTER</a> |
-        <a href="login.jsp">LOGIN</a>
+        <div id="header">
+            <h1>Amazing modern File Storage and sharing service: Hamster.xxx</h1>
+        </div>
+        <div id="accountManagement">
+            <a href="register.jsp">REGISTER</a> |
+            <a href="login.jsp">LOGIN</a>
+        </div>
+        <div id="content">
+            
+        </div>
+        <div id="footer">
+            
+        </div>
     </body>
 </html>
