@@ -10,7 +10,11 @@ public class DBConnectorTester {
         System.out.println("Hello");
         
                
-        DBConnector db = new DBConnector();
-        System.out.println("CHECK DATABASE: " + db.isConnection());
+        //DBConnector db = new DBConnector();
+        //System.out.println("CHECK DATABASE: " + db.isConnection());
+
+        String s = "userpass";
+        String sOut = Hash.md5(s);
+        System.out.println("sOut: " + sOut);
     }
 }
