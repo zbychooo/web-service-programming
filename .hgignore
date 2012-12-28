@@ -34,3 +34,7 @@ build/web/WEB-INF/classes/com/rest/client/NewClass.class
 build/generated-sources/rest/org/netbeans/rest/application/config/ApplicationConfig.java
 build/web/register.jsp
 build/web/login.jsp
+nbproject/rest-build.xml
+build/web/WEB-INF/web.xml
+build/web/WEB-INF/classes/com/utilities/Hash.class
+build/web/WEB-INF/classes/com/rest/service/HelloService.class
