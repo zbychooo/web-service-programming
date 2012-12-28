@@ -2,7 +2,7 @@ package com.rest.controller;
 
 import com.rest.model.User;
 import com.utilities.DBConnector;
-import com.utilities.SHA;
+import com.utilities.Hash;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,7 +88,7 @@ public class UsersController {
      */
     public void add(String login, String password,String username) {
         
-        password = SHA.encrypt(password);
+        password = Hash.SHA1(password);
         try {
             lastId += 1;
             User user = new User(lastId, login, password, username);
@@ -112,7 +112,7 @@ public class UsersController {
     }
     
     public String verifyCredentials(String login, String password) {
-        password = SHA.encrypt(password);
+        password = Hash.SHA1(password);
         
         User user = users.get(login);
         if((user == null) || (!user.getPassword().equals(password))){
