@@ -22,13 +22,13 @@ Inc.//DTD Web Application 2.3//EN"
     
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Guest Roles Security</web-resource-name>
-            <url-pattern>/rest/hello/sayBye</url-pattern>
+            <web-resource-name>User Roles Security</web-resource-name>
+            <url-pattern>/rest/userService/login</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
 
         <auth-constraint>
-            <role-name>guest</role-name>
+            <role-name>user</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>NONE</transport-guarantee>
@@ -38,7 +38,7 @@ Inc.//DTD Web Application 2.3//EN"
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Administrator Roles Security</web-resource-name>
-            <url-pattern>/rest/hello/sayHello</url-pattern>
+            <url-pattern>/rest/userService/login</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
 
@@ -52,17 +52,17 @@ Inc.//DTD Web Application 2.3//EN"
 
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>Roles test realm</realm-name>
+        <realm-name>...</realm-name>
     </login-config>
    	
     <security-role>
-        <description>Normal Administrator user</description>
+        <description>Administrator</description>
         <role-name>admin</role-name>
     </security-role>
    	
     <security-role>
-        <description>Normal guest user</description>
-        <role-name>guest</role-name>
+        <description>Normal User</description>
+        <role-name>user</role-name>
     </security-role>
 
 </web-app>

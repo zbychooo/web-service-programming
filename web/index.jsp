@@ -1,9 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : 2012-12-20, 18:11:55
-    Author     : Zbyszko
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -14,8 +8,8 @@
     <body>
         <h1>Hello World!</h1>
         <a href="register.jsp">REGISTER</a> |
-        <a href="login.jsp">LOGIN</a> |
-        <a href="rest/hello/sayHello">say Hello</a> |
-        <a href="rest/hello/sayBye">say Bye</a>
+        <a href="rest/userService/login">new LOGIN</a> |
+<!--        <a href="rest/hello/sayHello">say Hello</a> |
+        <a href="rest/hello/sayBye">say Bye</a>-->
     </body>
 </html>

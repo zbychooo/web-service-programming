@@ -89,7 +89,7 @@ public class UsersController {
      */
     public void add(String login, String password,String username) {
         
-        password = Hash.SHA1(password);
+        password = Hash.md5(password);
         try {
             lastId += 1;
             User user = new User(lastId, login, password, username, "user");
@@ -114,13 +114,13 @@ public class UsersController {
         }
     }
     
-    public String verifyCredentials(String login, String password) {
-        password = Hash.SHA1(password);
-        
-        User user = users.get(login);
-        if((user == null) || (!user.getPassword().equals(password))){
-            return ErrorsController.INVALID_CREDENTIALS;
-        }
-        return "OK";
-    }
+//    public String verifyCredentials(String login, String password) {
+//        password = Hash.SHA1(password);
+//        
+//        User user = users.get(login);
+//        if((user == null) || (!user.getPassword().equals(password))){
+//            return ErrorsController.INVALID_CREDENTIALS;
+//        }
+//        return "OK";
+//    }
 }
