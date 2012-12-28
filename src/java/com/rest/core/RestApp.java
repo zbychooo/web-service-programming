@@ -3,6 +3,8 @@ package com.rest.core;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import javax.ws.rs.ApplicationPath;
 
+
+
 /**
  *
  * @author Zbyszko
