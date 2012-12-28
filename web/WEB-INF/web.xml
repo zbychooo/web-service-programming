@@ -51,7 +51,7 @@ Inc.//DTD Web Application 2.3//EN"
     </security-constraint>
 
     <login-config>
-        <auth-method>DIGEST</auth-method>
+        <auth-method>BASIC</auth-method>
         <realm-name>Roles test realm</realm-name>
     </login-config>
    	
