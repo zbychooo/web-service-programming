@@ -23,8 +23,8 @@
                 <!-- start content -->
                 <div id="content">
                     <div id="fileactions">
-
-                        <input type="button" id="uploadfilemenu" value="Upload" />
+                        <input type="button" id="uploadfilemenu" value="Upload" 
+                               onclick="window.location.href='upload.jsp'"/>
                         <form id="fileform" action="rest/systemService/createFolder" method="POST" >
                             <input type="text" name="foldername" value="Folder Name" />
                             <input type="submit" id="newfoldermenu" value="New folder" />
