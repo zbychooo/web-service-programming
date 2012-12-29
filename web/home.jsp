@@ -10,7 +10,7 @@
             <div id="logo">
                 <h1><a href="#">Hamster.xxx</a></h1>
                 <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
-            </div><!--
+            </div>
             <div id="menu">
                 <ul id="accountmenu">
                     <li >
@@ -21,18 +21,85 @@
                         </ul>
                     </li>
                 </ul>
-            </div>-->
+            </div>
         </div>
         <div id="wrapper">
             <!-- start page -->
             <div id="page">           
                 <!-- start content -->
                 <div id="content">
-                    <form action="rest/userService/login" method="POST">
-                        login: <input type="text" name="login" value="" /><br />
-                        pass: <input type="password" name="password" value="" /><br />
-                        <input type="submit" value="Register" />
-                    </form>                    
+                    <div id="fileactions">
+                        <form id="fileform" >
+                            <input type="button" id="uploadfilemenu" value="Upload" />
+                            <input type="button" id="newfoldermenu" value="New folder" />
+                            <input type="button" id="sharefoldermenu" value="Share folder" />  
+                            &nbsp; Free space: 6.66 MB &nbsp;
+                            <input type="text" id="searchinlistinput" />
+                            <input type="button" id="searchinlisttrigger" value="search" />
+                        </form>
+                        <br/>
+                        <p><strong>Current folder: Folder #1</strong></p>
+                    </div>
+                    <br/>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="selectall" />
+                                </td>
+                                <td>
+                                    Name
+                                </td>
+                                <td>
+                                    Size
+                                </td>
+                                <td>
+                                    Added
+                                </td>
+                                <td>
+                                    Tags
+                                </td>
+                                <td>
+                                    Shared
+                                </td>
+                                <td colspan="3">
+                                    Actions
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="select" />                                    
+                                </td>
+                                <td>
+                                    01 Stone Letter.mp3
+                                </td>
+                                <td>
+                                    7.43 MB
+                                </td>
+                                <td>
+                                    2012-10-10 03:57
+                                </td>
+                                <td>
+                                    MUSIC
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="share" checked="true" disabled="true" /> 
+                                </td>
+                                <td>
+                                    <input type="button" id="tagfile" value="Tag" /> 
+                                </td>
+                                <td>
+                                    <input type="button" id="download" value="D" /> 
+                                </td>
+                                <td>
+                                    <input type="button" id="delete" value="X" /> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
                     
                     <a href="register.jsp">REGISTER</a><br/>
                     <a href="login.jsp">LOGIN</a> <br/>
