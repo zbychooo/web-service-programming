@@ -21,6 +21,8 @@ import javax.ws.rs.core.SecurityContext;
 @Singleton
 public class UserService {
 
+    UsersController usersController = new UsersController();
+
     @POST
     @Path("/register")
     @Produces(MediaType.TEXT_PLAIN)
@@ -29,7 +31,6 @@ public class UserService {
             @FormParam("confirm_password") String confirmPassword,
             @FormParam("username") String username) {
 
-        UsersController usersController = new UsersController();
         String returnMessage = usersController.checkUser(login, password, confirmPassword, username);
 
         if (returnMessage.equals("OK")) {
@@ -42,24 +43,10 @@ public class UserService {
     @Path("/login")
     @Produces(MediaType.TEXT_PLAIN)
     public Response loginUser(@Context SecurityContext sec) {
-        String out  = "Hello " + sec.getUserPrincipal().getName() + 
-                ", is secure? " + sec.isSecure();
+        String out = "Hello " + sec.getUserPrincipal().getName()
+                + ", is secure? " + sec.isSecure();
         System.out.println(out);
-        
+
         return Response.ok().entity(out).build();
-    }
-    
-    
-    
-//    @GET
-//    @Path("/logout")
-//    @Produces(MediaType.TEXT_PLAIN)
-//    public Response logoutUser(@Context HttpServletRequest req, @Context SecurityContext sec) {
-//        
-//        req.getSession().invalidate();
-//        
-//        
-//        
-//        return Response.ok().entity("logout").build();
-//    }
+    }    
 }

@@ -52,17 +52,25 @@ public class SystemService {
         return Response.ok().entity("Error: " + ErrorsController.FOLDER_ALREADY_EXISTS).build();
     }
 
-    @GET
+    @POST
     @Path("/uploadFile")
     public Response uploadFile() {
         System.out.println("upload file");
         return null;
     }
-
+    
+//    @GET
+//    @Path("/getContent/{user}")
+//    public Response getUserFileList(@PathParam("user") String userLogin){
+//        
+//        
+//        return null;
+//    }
+    
     @GET
     @Path("/getAvailableStorageSize")
     public Response getAvailableStorageSize(@Context SecurityContext sec) {
-        //cos nie konca dobrze liczy
+        //cos nie konca dobrze liczy...
         long l = systemController.getFolderSize(sec.getUserPrincipal().getName());
         long ile = SystemController.MAX_STORAGE - l;
         return Response.ok().entity("storage (kB): size: " + l + " " + ile
