@@ -12,8 +12,14 @@
                 <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
             </div>
             <div id="menu">
-                <ul>
-                    <li ><a href="#">my account</a></li>
+                <ul id="accountmenu">
+                    <li >
+                        <a href="#">my account</a>
+                        <ul>
+                            <li><a href="#">Account details</a></li>
+                            <li><a href="#">Logout</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -22,89 +28,35 @@
             <div id="page">           
                 <!-- start content -->
                 <div id="content">
-                    <div id="fileactions">
-                        <input type="button" id="uploadfilemenu" value="Upload" 
-                               onclick="window.location.href='upload.jsp'"/>
-                        <form id="fileform" action="rest/systemService/createFolder" method="POST" >
-                            <input type="text" name="foldername" value="Folder Name" />
-                            <input type="submit" id="newfoldermenu" value="New folder" />
-                        </form>
-                        <input type="button" id="sharefoldermenu" value="Share folder" />  
-                        &nbsp; Free space: 6.66 MB &nbsp;
-                        <input type="text" id="searchinlistinput" />
-                        <input type="button" id="searchinlisttrigger" value="search" />
-
-                        <br/>
-                        <p>
-                            <strong>
-                                Current folder: Folder #1
-                            </strong>
-                        </p>
-                    </div>
-                    <br/>
-                    <table>
-                        <thead>
+                    <form action="rest/userService/login" method="POST">
+                        <table>
                             <tr>
                                 <td>
-                                    <input type="checkbox" id="selectall" />
+                                    Login:
                                 </td>
                                 <td>
-                                    Name
+                                    <input type="text" name="login" value="" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Password:
                                 </td>
                                 <td>
-                                    Size
+                                    <input type="password" name="password" value="" />
                                 </td>
-                                <td>
-                                    Added
-                                </td>
-                                <td>
-                                    Tag
-                                </td>
-                                <td>
-                                    Shared
-                                </td>
+                            </tr>
+                            <tr>
                                 <td colspan="2">
-
+                                    <input type="submit" value="Login" />
                                 </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <a href="#">
-                                    <td>
-                                        <input type="checkbox" id="select" />                                    
-                                    </td>
-                                    <td>
-                                        01 Stone Letter.mp3
-                                    </td>
-                                    <td>
-                                        7.43 MB
-                                    </td>
-                                    <td>
-                                        2012-10-10 03:57
-                                    </td>
-                                    <td>
-                                        MUSIC
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" id="share" checked="true" disabled="true" /> 
-                                    </td>
-                                    <td>
-                                        <input type="button" id="download" value="D" /> 
-                                    </td>
-                                    <td>
-                                        <input type="button" id="delete" value="X" /> 
-                                    </td>
-                                </a>
-                            </tr>
-                        </tbody>
-                    </table>
+                        </table>
+                    </form>  
                     <br/>
-
-                    <a href="register.jsp">REGISTER</a><br/>
+                    <p>No account yet? <a href="register.jsp">Register</a> now for free</p><br/>
                     <a href="rest/userService/login">LOGIN</a> <br/>
-                    <a href="rest/systemService/createSpace">INIT PERSONAL SPACE</a> <br/>
-                    
+                    <a href="rest/systemService/createSpace">INIT PERSONAL SPACE</a> <br/>                    
                     <a href="rest/systemService/getAvailableStorageSize">space size</a><br/>
 
                 </div>
@@ -112,29 +64,6 @@
                 <!-- start sidebar -->
                 <div id="sidebar">
                     <ul>
-                        <li>
-                            <h2><strong>Menu</strong></h2>
-                            <ul>
-                                <li>
-                                    <!-- click on "my folders" and the user should be redirected to the list of folders, where they can 
-                                    add/delete/share/view them -->
-                                    <h3><a href="#" >My folders </a></h3>
-                                    <ul>
-                                        <li class="activelink"><a href="#">Folder #1</a></li>
-                                        <li><a href="#">Folder #2</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
-                                    where they can share/hide/view them -->
-                                    <h3><a href="#">Shared folders</a></h3>
-                                    <ul>
-                                        <li><a href="#">Folder #1</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">Watch porn</a></li>
-                            </ul>
-                        </li>
                         <li id="search">
                             <h2><b class="text1"> Global search</b></h2>
                             <form method="get" action="">
@@ -142,6 +71,10 @@
                                     <input type="text" id="s" name="s" value="" />
                                     <input type="submit" id="x" value="Search" />
                                 </fieldset>
+                                    <select id="searchby" >
+                                        <option id="byusers" value="Users" >Users</option>
+                                        <option id="bytags" value="Tags" >Tags</option>
+                                    </select>
                             </form>
                         </li>
                     </ul>
