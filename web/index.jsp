@@ -12,8 +12,14 @@
                 <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
             </div>
             <div id="menu">
-                <ul>
-                    <li ><a href="#">my account</a></li>
+                <ul id="accountmenu">
+                    <li >
+                        <a href="#">my account</a>
+                        <ul>
+                            <li><a href="#">Account details</a></li>
+                            <li><a href="#">Logout</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -32,11 +38,7 @@
                             <input type="button" id="searchinlisttrigger" value="search" />
                         </form>
                         <br/>
-                        <p>
-                            <strong>
-                                Current folder: Folder #1
-                            </strong>
-                        </p>
+                        <p><strong>Current folder: Folder #1</strong></p>
                     </div>
                     <br/>
                     <table>
@@ -55,19 +57,18 @@
                                     Added
                                 </td>
                                 <td>
-                                    Tag
+                                    Tags
                                 </td>
                                 <td>
                                     Shared
                                 </td>
-                                <td colspan="2">
-                                    
+                                <td colspan="3">
+                                    Actions
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <a href="#">
                                 <td>
                                     <input type="checkbox" id="select" />                                    
                                 </td>
@@ -87,12 +88,14 @@
                                     <input type="checkbox" id="share" checked="true" disabled="true" /> 
                                 </td>
                                 <td>
+                                    <input type="button" id="tagfile" value="Tag" /> 
+                                </td>
+                                <td>
                                     <input type="button" id="download" value="D" /> 
                                 </td>
                                 <td>
                                     <input type="button" id="delete" value="X" /> 
                                 </td>
-                                </a>
                             </tr>
                         </tbody>
                     </table>
@@ -137,6 +140,10 @@
 				<fieldset>
                                     <input type="text" id="s" name="s" value="" />
                                     <input type="submit" id="x" value="Search" />
+                                    <select id="searchby" >
+                                        <option id="byusers" value="Users" >Users</option>
+                                        <option id="bytags" value="Tags" >Tags</option>
+                                    </select>
 				</fieldset>
                             </form>
 			</li>
