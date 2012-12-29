@@ -124,40 +124,74 @@ input, textarea, select {
 /* Menu */
 
 #menu {
-	float: right;
-	padding-right: 30px;
+    float: right;
+    padding-right: 30px;
 }
 
-#menu ul {
-	margin: 0;
-	padding: 15px 0 0 0;
-	list-style: none;
+/*#menu ul {
+    margin: 0;
+    padding: 15px 0 0 0;
+    list-style: none;
 }
 
 #menu li {
-	display: inline;
+    display: inline;
 }
 
 #menu a {
-	display: block;
-	float: left;
-
-	margin-left: 5px;
-	padding: 5px 20px;
-	text-decoration: none;
-	font-size: 13px;
-	color: #999999;
+    display: block;
+    float: left;
+    margin-left: 5px;
+    padding: 5px 20px;
+    text-decoration: none;
+    font-size: 13px;
+    color: #999999;
 }
 
 #menu a:hover {
-	border-bottom: 3px #999999 solid;
-	text-decoration: none;
+    border-bottom: 3px #999999 solid;
+    text-decoration: none;
 }
 
 #menu .active a {
-	border-bottom: 3px #999999 solid;
+    border-bottom: 3px #999999 solid;
+}*/
+#accountmenu,
+#accountmenu > ul {
+    float: left;
+    margin: 0;
+    padding: 15px 0 0 0;
+    list-style: none;
+    
 }
 
+#accountmenu li a {
+    display:block;
+    height: 2em;
+    line-height: 2em;
+    padding: 0 1.5em;
+    text-decoration: none;
+}
+
+#accountmenu ul {
+    position: absolute;
+    display: none;
+    z-index: 999;
+    list-style: none;
+    padding: 0 0 0 0;
+}
+
+#accountmenu ul li a {
+/*    width: 80px;*/
+}
+
+#accountmenu li:hover ul {
+    display:block;
+    border: 1px #999999 solid;
+}
+
+
+/* wrapper */
 
 #wrapper {
 	border-top: 2px #CCCCCC solid;
