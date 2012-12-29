@@ -23,14 +23,17 @@
                 <!-- start content -->
                 <div id="content">
                     <div id="fileactions">
-                        <form id="fileform" >
-                            <input type="button" id="uploadfilemenu" value="Upload" />
-                            <input type="button" id="newfoldermenu" value="New folder" />
-                            <input type="button" id="sharefoldermenu" value="Share folder" />  
-                            &nbsp; Free space: 6.66 MB &nbsp;
-                            <input type="text" id="searchinlistinput" />
-                            <input type="button" id="searchinlisttrigger" value="search" />
+
+                        <input type="button" id="uploadfilemenu" value="Upload" />
+                        <form id="fileform" action="rest/systemService/createFolder" method="POST" >
+                            <input type="text" name="foldername" value="Folder Name" />
+                            <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
+                        <input type="button" id="sharefoldermenu" value="Share folder" />  
+                        &nbsp; Free space: 6.66 MB &nbsp;
+                        <input type="text" id="searchinlistinput" />
+                        <input type="button" id="searchinlisttrigger" value="search" />
+
                         <br/>
                         <p>
                             <strong>
@@ -61,49 +64,49 @@
                                     Shared
                                 </td>
                                 <td colspan="2">
-                                    
+
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <a href="#">
-                                <td>
-                                    <input type="checkbox" id="select" />                                    
-                                </td>
-                                <td>
-                                    01 Stone Letter.mp3
-                                </td>
-                                <td>
-                                    7.43 MB
-                                </td>
-                                <td>
-                                    2012-10-10 03:57
-                                </td>
-                                <td>
-                                    MUSIC
-                                </td>
-                                <td>
-                                    <input type="checkbox" id="share" checked="true" disabled="true" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="download" value="D" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="delete" value="X" /> 
-                                </td>
+                                    <td>
+                                        <input type="checkbox" id="select" />                                    
+                                    </td>
+                                    <td>
+                                        01 Stone Letter.mp3
+                                    </td>
+                                    <td>
+                                        7.43 MB
+                                    </td>
+                                    <td>
+                                        2012-10-10 03:57
+                                    </td>
+                                    <td>
+                                        MUSIC
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" id="share" checked="true" disabled="true" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="download" value="D" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="delete" value="X" /> 
+                                    </td>
                                 </a>
                             </tr>
                         </tbody>
                     </table>
                     <br/>
-                    
+
                     <a href="register.jsp">REGISTER</a><br/>
                     <a href="rest/userService/login">LOGIN</a> <br/>
                     <a href="rest/systemService/createSpace">INIT PERSONAL SPACE</a> <br/>
-                    <a href="rest/systemService/createFolder">create folder</a><br/>
-                    <a href="rest/systemService/getAvailableStorageSize">space size</a><br/>
                     
+                    <a href="rest/systemService/getAvailableStorageSize">space size</a><br/>
+
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->
@@ -121,7 +124,7 @@
                                         <li><a href="#">Folder #2</a></li>
                                     </ul>
                                 </li>
-				<li>
+                                <li>
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
                                     <h3><a href="#">Shared folders</a></h3>
@@ -129,18 +132,18 @@
                                         <li><a href="#">Folder #1</a></li>
                                     </ul>
                                 </li>
-				<li><a href="#">Watch porn</a></li>
+                                <li><a href="#">Watch porn</a></li>
                             </ul>
-			</li>
-			<li id="search">
+                        </li>
+                        <li id="search">
                             <h2><b class="text1"> Global search</b></h2>
                             <form method="get" action="">
-				<fieldset>
+                                <fieldset>
                                     <input type="text" id="s" name="s" value="" />
                                     <input type="submit" id="x" value="Search" />
-				</fieldset>
+                                </fieldset>
                             </form>
-			</li>
+                        </li>
                     </ul>
                 </div>
                 <!-- end sidebar -->

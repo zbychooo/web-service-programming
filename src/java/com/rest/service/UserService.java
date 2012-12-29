@@ -2,7 +2,6 @@ package com.rest.service;
 
 import com.rest.controller.UsersController;
 import com.sun.jersey.spi.resource.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
