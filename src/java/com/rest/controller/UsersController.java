@@ -114,13 +114,4 @@ public class UsersController {
         }
     }
     
-//    public String verifyCredentials(String login, String password) {
-//        password = Hash.SHA1(password);
-//        
-//        User user = users.get(login);
-//        if((user == null) || (!user.getPassword().equals(password))){
-//            return ErrorsController.INVALID_CREDENTIALS;
-//        }
-//        return "OK";
-//    }
 }
