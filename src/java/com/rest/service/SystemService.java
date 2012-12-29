@@ -74,8 +74,7 @@ public class SystemService {
             return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
         }
               
-        long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
-        System.out.println("FileID: " + fileId);
+        systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
 
         return Response.ok().entity("File is up, tags: " + tags 
                                             + ", login: " + userlogin).build();
