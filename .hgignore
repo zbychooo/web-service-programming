@@ -38,3 +38,9 @@ nbproject/rest-build.xml
 build/web/WEB-INF/web.xml
 build/web/WEB-INF/classes/com/utilities/Hash.class
 build/web/WEB-INF/classes/com/rest/service/HelloService.class
+build/web/upload.jsp
+build/web/template.html
+build/web/login-failed.jsp
+build/web/home.jsp
+build/web/default.css
+build/web/WEB-INF/classes/com/rest/controller/SystemController.class
