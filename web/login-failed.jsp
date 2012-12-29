@@ -1,3 +1,4 @@
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -6,13 +7,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Login</h1>
-
-<form method="POST" action="j_security_check">
-   <input type="text" name="j_username">
-   <input type="text" name="j_password">
-   <input type="submit" value="Log in">
-</form>
-
+        <h1>Logowanie - errror</h1>
     </body>
 </html>

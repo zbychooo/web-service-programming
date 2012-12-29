@@ -128,11 +128,10 @@ public class SystemController {
      *
      * @param fileName
      * @param fileSize
-     * @return
+     * @param tags 
      */
-    public long addFileInfoToDB(String fileName, long fileSize, String tags) {
+    public void addFileInfoToDB(String fileName, long fileSize, String tags) {
 
-        long id = 0;
         try {
             DBConnector db = new DBConnector();
 
@@ -147,21 +146,12 @@ public class SystemController {
                 statement.close();
             }
 
-            String sqlQuery2 = "select id from files where dateStamp='" + date.toString() + "'";
-
-            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
-                ResultSet rs = statement.executeQuery();
-                while (rs.next()) {
-                    id = rs.getLong(1);
-                }
-            }
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return id;
     }
 
 

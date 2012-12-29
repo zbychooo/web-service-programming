@@ -55,9 +55,18 @@ Inc.//DTD Web Application 2.3//EN"
         </user-data-constraint>
     </security-constraint>
 
-    <login-config>
+    <!--        <login-config>
         <auth-method>BASIC</auth-method>
         <realm-name>...</realm-name>
+    </login-config>-->
+    
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Web Demo</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/login-failed.jsp</form-error-page>
+        </form-login-config>
     </login-config>
    	
     <security-role>
