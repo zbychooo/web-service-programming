@@ -1,6 +1,20 @@
 package com.rest.controller;
 
+import com.utilities.DBConnector;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * System Controller class.
@@ -67,6 +81,90 @@ public class SystemController {
         }
         return length;
     }
+
+    /**
+     * Uploads file.
+     *
+     * @param in
+     * @param info
+     * @param path
+     * @param userlogin
+     * @return
+     */
+    public boolean uploadFile(InputStream in, String info,
+            String path, String userlogin) {
+
+        String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
+        File file = new File(fdir);
+
+        if (file.exists()) {
+            try {
+                throw new FileAlreadyExistsException(file.getName());
+            } catch (FileAlreadyExistsException ex) {
+                Logger.getLogger(SystemController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        try {
+            OutputStream out = new FileOutputStream(file);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+            out.close();
+
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(SystemController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds info about uploaded file.
+     *
+     * @param fileName
+     * @param fileSize
+     * @return
+     */
+    public long addFileInfoToDB(String fileName, long fileSize, String tags) {
+
+        long id = 0;
+        try {
+            DBConnector db = new DBConnector();
+
+            Date date = new java.util.Date();
+            String sqlQuery = "insert into files(fileName, fileSize, dateStamp, tagName) values(?,?,?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.setString(1, fileName);
+                statement.setLong(2, fileSize);
+                statement.setString(3, date.toString());
+                statement.setString(4, tags);
+                statement.executeUpdate();
+                statement.close();
+            }
+
+            String sqlQuery2 = "select id from files where dateStamp='" + date.toString() + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    id = rs.getLong(1);
+                }
+            }
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return id;
+    }
+
+
 //    public void deleteFolder(File directory) {
 //        File[] files = directory.listFiles();
 //        if (files != null) { //some JVMs return null for empty dirs

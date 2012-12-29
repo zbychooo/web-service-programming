@@ -2,11 +2,16 @@ package com.rest.service;
 
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
+import java.io.InputStream;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -40,7 +45,7 @@ public class SystemService {
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
     public Response createFolder(@FormParam("foldername") String folderName, @Context SecurityContext sec) {
-        
+
         //dziala, ale trzeba sie zalogowac...
         boolean isCreated = systemController.createFolder(
                 folderName,
@@ -54,11 +59,28 @@ public class SystemService {
 
     @POST
     @Path("/uploadFile")
-    public Response uploadFile() {
-        System.out.println("upload file");
-        return null;
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response upload(@FormDataParam("file") InputStream in, 
+        @FormDataParam("file") FormDataContentDisposition info, 
+        @FormDataParam("tags") String tags, @FormDataParam("path") String path,
+        @Context SecurityContext sec) {
+
+        path = ""; //TODO: zmienic!!!
+        String userlogin = sec.getUserPrincipal().getName();
+        tags = tags.toUpperCase();            
+        boolean isUploaded = systemController.uploadFile(in, info.getFileName(), path, userlogin);
+        
+        if (!isUploaded) {
+            return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
+        }
+              
+        long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
+        System.out.println("FileID: " + fileId);
+
+        return Response.ok().entity("File is up, tags: " + tags 
+                                            + ", login: " + userlogin).build();
     }
-    
+
 //    @GET
 //    @Path("/getContent/{user}")
 //    public Response getUserFileList(@PathParam("user") String userLogin){
@@ -67,13 +89,25 @@ public class SystemService {
 //        return null;
 //    }
     
+//    @GET
+//    @Path("/getTag/{tag}")
+//    public Response getTags(@PathParam("tag") String tag){
+//        return null;
+//    }
+    
+    
     @GET
     @Path("/getAvailableStorageSize")
+    @Produces("text/plain")
     public Response getAvailableStorageSize(@Context SecurityContext sec) {
-        //cos nie konca dobrze liczy...
-        long l = systemController.getFolderSize(sec.getUserPrincipal().getName());
-        long ile = SystemController.MAX_STORAGE - l;
-        return Response.ok().entity("storage (kB): size: " + l + " " + ile
-                + " max: " + SystemController.MAX_STORAGE).build();
+        
+        long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
+        long availableSpace = SystemController.MAX_STORAGE - folderSize;
+        
+        String outMessage = "Main folder size: " + folderSize + "kb \n" +
+                "Max: " + SystemController.MAX_STORAGE + "kb \n" +
+                "Available: " + availableSpace + "kb.";
+        
+        return Response.ok().entity(outMessage).build();
     }
 }
