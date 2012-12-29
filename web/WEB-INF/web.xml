@@ -29,6 +29,7 @@ Inc.//DTD Web Application 2.3//EN"
             
             <url-pattern>/rest/systemService/*</url-pattern>
             <http-method>GET</http-method>
+            
         </web-resource-collection>
 
         <auth-constraint>

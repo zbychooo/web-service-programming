@@ -1,8 +1,8 @@
 package com.rest.service;
 
 import com.rest.controller.UsersController;
-import com.sun.jersey.api.view.Viewable;
 import com.sun.jersey.spi.resource.Singleton;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,9 +43,24 @@ public class UserService {
     @Path("/login")
     @Produces(MediaType.TEXT_PLAIN)
     public Response loginUser(@Context SecurityContext sec) {
-        System.out.println("Hello " + sec.getUserPrincipal().getName() + 
-                ", is secure? " + sec.isSecure());
+        String out  = "Hello " + sec.getUserPrincipal().getName() + 
+                ", is secure? " + sec.isSecure();
+        System.out.println(out);
         
-        return Response.ok().build();
+        return Response.ok().entity(out).build();
     }
+    
+    
+    
+//    @GET
+//    @Path("/logout")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public Response logoutUser(@Context HttpServletRequest req, @Context SecurityContext sec) {
+//        
+//        req.getSession().invalidate();
+//        
+//        
+//        
+//        return Response.ok().entity("logout").build();
+//    }
 }
