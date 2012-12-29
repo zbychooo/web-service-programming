@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rest.controller;
 
 import java.io.File;
@@ -13,7 +9,7 @@ import java.io.File;
  */
 public class SystemController {
 
-    private static final int MAX_STORAGE = 10;
+    public static final long MAX_STORAGE = 204800; //200MB = 2048kB
     private static final String MAIN_STORAGE_FOLDER = "D:\\RESTCloudStorage\\";
 
     public SystemController() {
@@ -52,26 +48,25 @@ public class SystemController {
      * Gets the size of given directory.
      *
      * @param directoryName
-     * @return
+     * @return size in kB
      */
     public long getFolderSize(String directoryName) {
 
         File directory = new File(MAIN_STORAGE_FOLDER + directoryName);
-        return this.calculateFolderSize(directory);
+        return (this.calculateFolderSize(directory, 0) / 1024);
     }
 
-    private long calculateFolderSize(File directory) {
-        long length = 0;
+    private long calculateFolderSize(File directory, long length) {
+
         for (File file : directory.listFiles()) {
             if (file.isFile()) {
                 length += file.length();
             } else {
-                length += calculateFolderSize(file);
+                length += calculateFolderSize(file, length);
             }
         }
-        return length/(1024); //in MB
+        return length;
     }
-
 //    public void deleteFolder(File directory) {
 //        File[] files = directory.listFiles();
 //        if (files != null) { //some JVMs return null for empty dirs
