@@ -99,9 +99,10 @@
                     <br/>
                     
                     <a href="register.jsp">REGISTER</a><br/>
-                    <a href="login.jsp">LOGIN</a> <br/>
-                    <a href="rest/hello/sayHello">say Hello</a> <br/>
-                    <a href="rest/hello/sayBye">say Bye</a><br/>
+                    <a href="rest/userService/login">LOGIN</a> <br/>
+                    <a href="rest/systemService/createSpace">INIT PERSONAL SPACE</a> <br/>
+                    <a href="rest/systemService/createFolder">create folder</a><br/>
+                    <a href="rest/systemService/getAvailableStorageSize">space size</a><br/>
                     
                 </div>
                 <!-- end content -->     
