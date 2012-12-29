@@ -1,6 +1,7 @@
 package com.rest.service;
 
 import com.rest.controller.UsersController;
+import com.sun.jersey.api.view.Viewable;
 import com.sun.jersey.spi.resource.Singleton;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -41,9 +42,10 @@ public class UserService {
     @GET
     @Path("/login")
     @Produces(MediaType.TEXT_PLAIN)
-    public String loginUser(@Context SecurityContext sec) {
-        System.out.println("is secure? " + sec.isSecure());
+    public Response loginUser(@Context SecurityContext sec) {
+        System.out.println("Hello " + sec.getUserPrincipal().getName() + 
+                ", is secure? " + sec.isSecure());
         
-        return "Hello " + sec.getUserPrincipal().getName()+" !";
+        return Response.ok().build();
     }
 }

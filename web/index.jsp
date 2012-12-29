@@ -9,7 +9,8 @@
         <h1>Hello World!</h1>
         <a href="register.jsp">REGISTER</a> |
         <a href="rest/userService/login">new LOGIN</a> |
-<!--        <a href="rest/hello/sayHello">say Hello</a> |
-        <a href="rest/hello/sayBye">say Bye</a>-->
+        <a href="rest/systemService/createSpace">createSpace</a> |
+        <a href="rest/systemService/uploadFile">uploadFile</a> |
+        <a href="rest/systemService/deleteFile">deleteFile</a>
     </body>
 </html>
