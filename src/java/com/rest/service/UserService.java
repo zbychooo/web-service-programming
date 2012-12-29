@@ -2,6 +2,7 @@ package com.rest.service;
 
 import com.rest.controller.UsersController;
 import com.sun.jersey.spi.resource.Singleton;
+import java.net.URI;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,7 +47,12 @@ public class UserService {
         String out = "Hello " + sec.getUserPrincipal().getName()
                 + ", is secure? " + sec.isSecure();
         System.out.println(out);
-
-        return Response.ok().entity(out).build();
+        
+        try{
+        return Response.temporaryRedirect(new URI("home.jsp")).build();
+        } catch(Exception e){
+            System.out.println("ERROR IN LOGIN: "+e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }    
 }

@@ -29,14 +29,16 @@
                 <!-- start content -->
                 <div id="content">
                     <div id="fileactions">
-                        <form id="fileform" >
-                            <input type="button" id="uploadfilemenu" value="Upload" />
-                            <input type="button" id="newfoldermenu" value="New folder" />
-                            <input type="button" id="sharefoldermenu" value="Share folder" />  
-                            &nbsp; Free space: 6.66 MB &nbsp;
-                            <input type="text" id="searchinlistinput" />
-                            <input type="button" id="searchinlisttrigger" value="search" />
+                        <input type="button" id="uploadfilemenu" value="Upload" 
+                               onclick="window.location.href='upload.jsp'"/>
+                        <form id="fileform" action="rest/systemService/createFolder" method="POST" >
+                            <input type="text" name="foldername" value="Folder Name" />
+                            <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
+                        <input type="button" id="sharefoldermenu" value="Share folder" />  
+                        &nbsp; Free space: 6.66 MB &nbsp;
+                        <input type="text" id="searchinlistinput" />
+                        <input type="button" id="searchinlisttrigger" value="search" />
                         <br/>
                         <p><strong>Current folder: Folder #1</strong></p>
                     </div>
