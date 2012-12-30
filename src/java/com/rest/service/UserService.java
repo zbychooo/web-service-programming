@@ -55,4 +55,13 @@ public class UserService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }    
+    
+    @GET
+    @Path("/myfiles")
+    public Response getMyFiles(@Context SecurityContext sec){
+        
+        
+        
+        return null;
+    }
 }
