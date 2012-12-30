@@ -38,6 +38,9 @@ Inc.//DTD Web Application 2.3//EN"
             <url-pattern>/upload.jsp</url-pattern>
             <http-method>GET</http-method>
             
+            <url-pattern>/index.jsp</url-pattern>
+            <http-method>GET</http-method>
+            
         </web-resource-collection>
 
         <auth-constraint>
