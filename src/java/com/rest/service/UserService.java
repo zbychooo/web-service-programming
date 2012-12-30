@@ -49,11 +49,12 @@ public class UserService {
         System.out.println(out);
         
         try{
-        return Response.temporaryRedirect(new URI("home.jsp")).build();
+            //return Response.temporaryRedirect(new URI("home.jsp")).build();
         } catch(Exception e){
             System.out.println("ERROR IN LOGIN: "+e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+         //   return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+        return Response.status(Response.Status.OK).entity("OK").build();
     }    
     
     @GET
