@@ -10,9 +10,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,10 +126,11 @@ public class SystemController {
      *
      * @param fileName
      * @param fileSize
-     * @param tags 
+     * @return
      */
-    public void addFileInfoToDB(String fileName, long fileSize, String tags) {
+    public long addFileInfoToDB(String fileName, long fileSize, String tags) {
 
+        long id = 0;
         try {
             DBConnector db = new DBConnector();
 
@@ -146,15 +145,57 @@ public class SystemController {
                 statement.close();
             }
 
+            String sqlQuery2 = "select id from files where dateStamp='" + date.toString() + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    id = rs.getLong(1);
+                }
+            }
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        return id;
     }
 
+    public void joinFileAndOwner(long fileID, String login) {
 
+        long userID = 0;
+        try {
+            DBConnector db = new DBConnector();
+            String sqlQuery = "select id from users where login='" + login + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    userID = rs.getLong(1);
+                }
+            }
+            System.out.println("userid: " + userID + " fileid: " + fileID);
+            String sqlQuery2 = "insert into files_users(userId, fileId) values(?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                statement.setLong(1, userID);
+                statement.setLong(2, fileID);
+                statement.executeUpdate();
+                statement.close();
+            }
+
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+//    public void deleteFile(String fileName){
+//   //??? przemyslec     
+//    File file = new File(fileName);
+//        file.delete();
+//    }
 //    public void deleteFolder(File directory) {
 //        File[] files = directory.listFiles();
 //        if (files != null) { //some JVMs return null for empty dirs

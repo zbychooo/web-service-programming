@@ -67,33 +67,31 @@ public class SystemService {
 
         path = ""; //TODO: zmienic!!!
         String userlogin = sec.getUserPrincipal().getName();
+        if(userlogin==null){
+            return Response.serverError().build();
+        }
         tags = tags.toUpperCase();            
         boolean isUploaded = systemController.uploadFile(in, info.getFileName(), path, userlogin);
         
         if (!isUploaded) {
             return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
         }
-              
-        systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
+        
+        // zapisanie informacji o pliku w bazie danych
+        long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
+        // zapisanie informacji o właścicielu pliku
+        systemController.joinFileAndOwner(fileId, userlogin);
 
-        return Response.ok().entity("File is up, tags: " + tags 
-                                            + ", login: " + userlogin).build();
+        return Response.ok().entity("File is up.").build();
     }
 
-//    @GET
-//    @Path("/getContent/{user}")
-//    public Response getUserFileList(@PathParam("user") String userLogin){
-//        
-//        
-//        return null;
-//    }
-    
-//    @GET
-//    @Path("/getTag/{tag}")
-//    public Response getTags(@PathParam("tag") String tag){
-//        return null;
-//    }
-    
+    @GET
+    @Path("/get/{resource}")
+    public Response getUserFileList(@PathParam("resource") String resource){
+        //get files by tag or get users files
+        return null;
+    }
+        
     
     @GET
     @Path("/getAvailableStorageSize")

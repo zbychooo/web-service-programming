@@ -27,7 +27,15 @@ Inc.//DTD Web Application 2.3//EN"
             <url-pattern>/rest/userService/login</url-pattern>
             <http-method>GET</http-method>
             
+            <url-pattern>/rest/userService/myfiles</url-pattern>
+            <http-method>GET</http-method>
+            
             <url-pattern>/rest/systemService/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+
+            
+            <url-pattern>/upload.jsp</url-pattern>
             <http-method>GET</http-method>
             
         </web-resource-collection>
