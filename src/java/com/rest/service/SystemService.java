@@ -2,10 +2,15 @@ package com.rest.service;
 
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
+import com.sun.jersey.api.view.Viewable;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -107,4 +112,21 @@ public class SystemService {
         
         return Response.ok().entity(outMessage).build();
     }
+    
+    @GET
+    @Path("/getRemainingStorageSize")
+    @Produces("text/plain")
+    public Response getRemainingStorageSize(@Context SecurityContext sec) {
+        
+        try{
+            long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
+            long availableSpace = SystemController.MAX_STORAGE - folderSize;
+            Double availableSpaceD = availableSpace / 1000.0;
+            
+            return Response.ok().entity(Double.toString(availableSpaceD)).build();
+        } catch(Exception e){
+            return Response.ok().entity("0").build();
+        }
+    }
+    
 }

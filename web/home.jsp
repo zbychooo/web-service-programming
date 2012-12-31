@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Hamster.xxx - Best File Storage service</title>
@@ -35,8 +36,8 @@
                             <input type="text" name="foldername" value="Folder Name" />
                             <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
-                        <input type="button" id="sharefoldermenu" value="Share folder" />  
-                        &nbsp; Free space: 6.66 MB &nbsp;
+                        <input type="button" id="sharefoldermenu" value="Share folder" />
+                        &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <input type="text" id="searchinlistinput" />
                         <input type="button" id="searchinlisttrigger" value="search" />
                         <br/>
@@ -101,13 +102,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    <br/>
-                    
-                    <a href="register.jsp">REGISTER</a><br/>
-                    <a href="login.jsp">LOGIN</a> <br/>
-                    <a href="rest/hello/sayHello">say Hello</a> <br/>
-                    <a href="rest/hello/sayBye">say Bye</a><br/>
-                    
+                    <br/>        
+                    <a href="rest/systemService/login">login</a> | <a href="upload.jsp">upload</a> |                    
+                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>            
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->
