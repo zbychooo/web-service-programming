@@ -103,8 +103,9 @@
                         </tbody>
                     </table>
                     <br/>        
-                    <a href="rest/systemService/login">login</a> | <a href="upload.jsp">upload</a> |                    
-                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>            
+                    <a href="upload.jsp">upload</a> |                    
+                    <a href="rest/systemService/getRemainingStorageSize">get total space size</a> |
+                    <a href="rest/userService/getUserLogin">get User login</a>
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->

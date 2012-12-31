@@ -50,16 +50,13 @@ public class UserService {
         System.out.println(out);
         
         return Response.status(Response.Status.OK).entity("OK").build();
-    }    
+    }
     
     @GET
-    @Path("/myfiles")
-    @Produces("text/plain")
-    public Response getMyFiles(@Context SecurityContext sec){
-        
-        //SystemController system = new SystemController();
-        //String out = system.listUserFiles(sec.getUserPrincipal().getName());
-        
-        return Response.ok().entity("Funcja dezaktywowana... poki co...").build();
+    @Path("/getUserLogin")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getUserLogin(@Context SecurityContext sec){
+        return Response.ok().entity(sec.getUserPrincipal().getName()).build();
     }
+    
 }

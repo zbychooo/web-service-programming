@@ -63,9 +63,10 @@ public class SystemService {
 
     @GET
     @Path("/openFolder/{directoryName}")
+    @Produces(MediaType.TEXT_HTML)
     public Response openFolder(@PathParam("directoryName") String directoryName) {
         
-        return null;
+        return Response.ok().entity("<h1>AAA</h1> <p> bbbb</p>").build();
     }
 
     @GET
@@ -77,6 +78,7 @@ public class SystemService {
     //--------------------- [FILES] ---------------------------
     @POST
     @Path("/uploadFile")
+    @Produces("text/plain")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response upload(@FormDataParam("file") InputStream in,
             @FormDataParam("file") FormDataContentDisposition info,
@@ -100,7 +102,7 @@ public class SystemService {
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
 
-        return Response.ok().entity("File is up.").build();
+        return Response.ok().entity("File " + info.getFileName() + " is up.").build();
     }
 
     @GET
@@ -110,8 +112,33 @@ public class SystemService {
     }
 
     @GET
-    @Path("/deleteFile/{fileName}")
-    public Response deleteFile(@PathParam("fileName") String fileName) {
+    @Path("/deleteFile/{currentPath}/{fileName}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteFile(@PathParam("fileName") String fileName, @PathParam("currentPath") String path) {
+        //rozdzielnik dla path? 
+        boolean isDeleted = systemController.deleteFile(path, fileName);
+        
+        if(isDeleted) {
+            return Response.ok().entity("File has been deleted.").build();
+        }     
+        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+    }
+    
+    @GET
+    @Path("/shareFile/{fileName}")
+    public Response shareFile(@PathParam("fileName") String fileName) {
+        return null;
+    }
+    
+    @GET
+    @Path("/unshareFile/{fileName}")
+    public Response unshareFile(@PathParam("fileName") String fileName) {
+        return null;
+    }
+    
+    @POST
+    @Path("/tagFile")
+    public Response tagFile(){
         return null;
     }
 

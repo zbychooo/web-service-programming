@@ -27,7 +27,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
             <url-pattern>/rest/userService/login</url-pattern>
             <http-method>GET</http-method>
             
-            <url-pattern>/rest/userService/myfiles</url-pattern>
+            <url-pattern>/rest/userService/getUserLogin</url-pattern>
             <http-method>GET</http-method>
             
             <url-pattern>/rest/systemService/*</url-pattern>

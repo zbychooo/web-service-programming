@@ -44,3 +44,5 @@ build/web/login-failed.jsp
 build/web/home.jsp
 build/web/default.css
 build/web/WEB-INF/classes/com/rest/controller/SystemController.class
+build/web/WEB-INF/classes/com/rest/service/ClientService.class
+build/web/WEB-INF/lib/javax.servlet.jsp.jstl-1.2.1.jar
