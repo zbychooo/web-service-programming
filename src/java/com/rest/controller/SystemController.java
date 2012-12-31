@@ -10,6 +10,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,9 +25,6 @@ public class SystemController {
 
     public static final long MAX_STORAGE = 204800; //200MB = 2048kB
     private static final String MAIN_STORAGE_FOLDER = "D:\\RESTCloudStorage\\";
-
-    public SystemController() {
-    }
 
     /**
      * Creates a directory where the user files will be stored.
@@ -89,12 +88,12 @@ public class SystemController {
      * @param userlogin
      * @return
      */
-    public boolean uploadFile(InputStream in, String info,
+    public long uploadFile(InputStream in, String info,
             String path, String userlogin) {
 
         String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
         File file = new File(fdir);
-
+        
         if (file.exists()) {
             try {
                 throw new FileAlreadyExistsException(file.getName());
@@ -113,21 +112,14 @@ public class SystemController {
             out.flush();
             out.close();
 
-            return true;
+            return file.length();
         } catch (IOException ex) {
             Logger.getLogger(SystemController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return false;
+        return -1;
     }
 
-    /**
-     * Adds info about uploaded file.
-     *
-     * @param fileName
-     * @param fileSize
-     * @return
-     */
     public long addFileInfoToDB(String fileName, long fileSize, String tags) {
 
         long id = 0;
@@ -135,11 +127,13 @@ public class SystemController {
             DBConnector db = new DBConnector();
 
             Date date = new java.util.Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            
             String sqlQuery = "insert into files(fileName, fileSize, dateStamp, tagName) values(?,?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setString(1, fileName);
                 statement.setLong(2, fileSize);
-                statement.setString(3, date.toString());
+                statement.setString(3, dateFormat.format(date));
                 statement.setString(4, tags);
                 statement.executeUpdate();
                 statement.close();
@@ -191,6 +185,22 @@ public class SystemController {
         }
     }
     
+//    public String listUserFiles(String userlogin){
+//        File directory = new File(MAIN_STORAGE_FOLDER + userlogin);
+//        File[] files = directory.listFiles();
+//        
+//        String fileList = ":: " + userlogin + " files: \n";
+//        for(File f : files) {
+//            if(f.isDirectory()) {
+//                fileList += f.getName() + " (directory) \n";
+//            } else {
+//                fileList += f.getName() + " size:" + f.length()/1024 + "kb \n";
+//            }
+//        }
+//        return fileList;
+//        
+//    }
+//    
 //    public void deleteFile(String fileName){
 //   //??? przemyslec     
 //    File file = new File(fileName);

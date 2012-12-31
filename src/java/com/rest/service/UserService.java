@@ -1,5 +1,6 @@
 package com.rest.service;
 
+import com.rest.controller.SystemController;
 import com.rest.controller.UsersController;
 import com.sun.jersey.spi.resource.Singleton;
 import java.net.URI;
@@ -53,10 +54,12 @@ public class UserService {
     
     @GET
     @Path("/myfiles")
+    @Produces("text/plain")
     public Response getMyFiles(@Context SecurityContext sec){
         
+        //SystemController system = new SystemController();
+        //String out = system.listUserFiles(sec.getUserPrincipal().getName());
         
-        
-        return null;
+        return Response.ok().entity("Funcja dezaktywowana... poki co...").build();
     }
 }
