@@ -93,7 +93,7 @@ public class SystemController {
 
         String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
         File file = new File(fdir);
-        
+
         if (file.exists()) {
             try {
                 throw new FileAlreadyExistsException(file.getName());
@@ -128,18 +128,18 @@ public class SystemController {
 
             Date date = new java.util.Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            
+            String currentDate = dateFormat.format(date);
             String sqlQuery = "insert into files(fileName, fileSize, dateStamp, tagName) values(?,?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setString(1, fileName);
                 statement.setLong(2, fileSize);
-                statement.setString(3, dateFormat.format(date));
+                statement.setString(3, currentDate);
                 statement.setString(4, tags);
                 statement.executeUpdate();
                 statement.close();
             }
 
-            String sqlQuery2 = "select id from files where dateStamp='" + date.toString() + "'";
+            String sqlQuery2 = "select id from files where dateStamp='" + currentDate + "'";
 
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
                 ResultSet rs = statement.executeQuery();
@@ -170,10 +170,11 @@ public class SystemController {
                 }
             }
             System.out.println("userid: " + userID + " fileid: " + fileID);
-            String sqlQuery2 = "insert into files_users(userId, fileId) values(?,?)";
+            String sqlQuery2 = "insert into files_users(userId, fileId, isOwner) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
                 statement.setLong(1, userID);
                 statement.setLong(2, fileID);
+                statement.setString(3, "TRUE");
                 statement.executeUpdate();
                 statement.close();
             }
@@ -184,12 +185,13 @@ public class SystemController {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-//    public String listUserFiles(String userlogin){
-//        File directory = new File(MAIN_STORAGE_FOLDER + userlogin);
+
+//    public String listUserFiles(String path){
+//        
+//        File directory = new File(MAIN_STORAGE_FOLDER + path);
 //        File[] files = directory.listFiles();
 //        
-//        String fileList = ":: " + userlogin + " files: \n";
+//        String fileList = ":: \n";
 //        for(File f : files) {
 //            if(f.isDirectory()) {
 //                fileList += f.getName() + " (directory) \n";
@@ -201,17 +203,19 @@ public class SystemController {
 //        
 //    }
 //    
-//    public void deleteFile(String fileName){
-//   //??? przemyslec     
-//    File file = new File(fileName);
-//        file.delete();
-//    }
-//    public void deleteFolder(File directory) {
+    public boolean deleteFile(String path, String fileName) {
+        //System.out.println(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
+        File file = new File(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
+        return file.delete();
+    }
+
+//    public void deleteFolder(String path) {
+//        File directory = new File(MAIN_STORAGE_FOLDER + path);
 //        File[] files = directory.listFiles();
 //        if (files != null) { //some JVMs return null for empty dirs
 //            for (File f : files) {
 //                if (f.isDirectory()) {
-//                    deleteFolder(f);
+//                    deleteFolder(f.getName());
 //                } else {
 //                    f.delete();
 //                }

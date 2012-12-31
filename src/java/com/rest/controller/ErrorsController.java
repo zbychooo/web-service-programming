@@ -14,6 +14,7 @@ public class ErrorsController {
     public static String INVALID_CREDENTIALS = "Invalid credentials";
     public static String SPACE_ALREADY_CREATED = "Space has been already created";
     public static String FOLDER_ALREADY_EXISTS = "Given folder already exits";
-    public static String UPLOAD_ERROR = "File has been not uploaded";
+    public static String UPLOAD_ERROR = "File has been NOT uploaded";
+    public static String DELETION_ERROR = "File has been NOT deleted";
     
 }
