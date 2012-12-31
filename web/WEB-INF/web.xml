@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+    
+    <servlet>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.rest.service</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>User Roles Security</web-resource-name>
+            
+            <url-pattern>/rest/userService/login</url-pattern>
+            <http-method>GET</http-method>
+            
+            <url-pattern>/rest/userService/myfiles</url-pattern>
+            <http-method>GET</http-method>
+            
+            <url-pattern>/rest/systemService/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+
+            
+            <url-pattern>/upload.jsp</url-pattern>
+            <http-method>GET</http-method>
+            
+            <url-pattern>/index.jsp</url-pattern>
+            <http-method>GET</http-method>
+            
+        </web-resource-collection>
+
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+   	
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Administrator Roles Security</web-resource-name>
+            <url-pattern>/rest/userService/login</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <!--        <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>...</realm-name>
+    </login-config>-->
+    
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Web Demo</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/login-failed.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+   	
+    <security-role>
+        <description>Administrator</description>
+        <role-name>admin</role-name>
+    </security-role>
+   	
+    <security-role>
+        <description>Normal User</description>
+        <role-name>user</role-name>
+    </security-role>
+
+</web-app>
