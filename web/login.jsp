@@ -55,8 +55,6 @@
                     </form>  
                     <br/>
                     <p>No account yet? <a href="register.jsp">Register</a> now for free</p><br/>
-                    <a href="systemService/login">login</a> | <a href="upload.jsp">upload</a> |                    
-                    <a href="systemService/getAvailableStorageSize">get total space size</a><br/>
 
                 </div>
                 <!-- end content -->     

@@ -2,15 +2,13 @@ package com.rest.service;
 
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
-import com.rest.model.Folder;
+import com.sun.jersey.api.view.Viewable;
 import com.rest.model.User;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -30,7 +28,8 @@ import javax.ws.rs.core.*;
 public class SystemService {
 
     SystemController systemController = new SystemController();
-
+    
+    //------------------- [FOLDERS] --------------------------------------------
     @GET
     @Path("/createSpace")
     public Response createSpace(@Context SecurityContext sec) {
@@ -46,82 +45,129 @@ public class SystemService {
     @POST
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response createFolder(@FormParam("foldername") String folderName, @Context SecurityContext sec) {
+    public Response createFolder(@FormParam("foldername") String folderName, 
+        @FormParam("path") String path, @Context SecurityContext sec) {
 
-        //dziala, ale trzeba sie zalogowac...
+
         boolean isCreated = systemController.createFolder(
                 folderName,
                 sec.getUserPrincipal().getName());
 
         if (isCreated) {
+            long dirId = systemController.addFileInfoToDB(folderName, 0, "DIRECTORY",path); 
+            systemController.joinFileAndOwner(dirId, sec.getUserPrincipal().getName());
             return Response.ok().entity("isCreated: " + isCreated).build();
         }
+
         return Response.ok().entity("Error: " + ErrorsController.FOLDER_ALREADY_EXISTS).build();
     }
 
+    @GET
+    @Path("/openFolder/{directoryName}")
+    @Produces(MediaType.TEXT_HTML)
+    public Response openFolder(@PathParam("directoryPath") String directoryPath, @Context SecurityContext sec) {
+     
+        return null;//Response.ok().entity("<h1>AAA</h1> <p> bbbb</p>").build();
+    }
+
+    @GET
+    @Path("/deleteFolder/{directoryPath}")
+    public Response deleteFolder(@PathParam("directoryPath") String directoryPath) {
+        //directoryPath = "admin//sylwek";
+        //TODO: rozdzielnik dla path
+        //TODO: usuwanie z bazy
+        boolean isDeleted = systemController.deleteFolder(directoryPath);
+        if(isDeleted) {
+            return Response.ok().entity("Folder has been deleted").build();
+        }
+        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+    }
+
+    //--------------------- [FILES] ---------------------------
     @POST
     @Path("/uploadFile")
+    @Produces("text/plain")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response upload(@FormDataParam("file") InputStream in, 
-        @FormDataParam("file") FormDataContentDisposition info, 
-        @FormDataParam("tags") String tags, @FormDataParam("path") String path,
-        @Context SecurityContext sec) {
+    public Response upload(@FormDataParam("file") InputStream in,
+            @FormDataParam("file") FormDataContentDisposition info,
+            @FormDataParam("tags") String tags, @FormDataParam("path") String path,
+            @Context SecurityContext sec) {
 
-        path = ""; //TODO: zmienic!!!
+        path = "admin"; //TODO: hardcoded, zmienic!!!
         String userlogin = sec.getUserPrincipal().getName();
-        if(userlogin==null){
+        if (userlogin == null) {
             return Response.serverError().build();
         }
-        tags = tags.toUpperCase();            
-        boolean isUploaded = systemController.uploadFile(in, info.getFileName(), path, userlogin);
-        
-        if (!isUploaded) {
+        tags = tags.toUpperCase();
+        long fileSize = systemController.uploadFile(in, info.getFileName(), path, userlogin);
+
+        if (fileSize == -1) {
             return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
         }
-        
+
         // zapisanie informacji o pliku w bazie danych
-        long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags);
+        long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tags, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
 
-        return Response.ok().entity("File is up.").build();
+        return Response.ok().entity("File " + info.getFileName() + " is up.").build();
     }
 
     @GET
-    @Path("/get/{resource}")
-    public Response getUserFileList(@PathParam("resource") String resource){
-        //get files by tag or get users files
+    @Path("/downloadFile/{fileName}")
+    public Response downloadFile(@PathParam("fileName") String fileName) {
         return null;
     }
-        
-    
+
     @GET
-    @Path("/getAvailableStorageSize")
-    @Produces("text/plain")
-    public Response getAvailableStorageSize(@Context SecurityContext sec) {
+    @Path("/deleteFile/{currentPath}/{fileName}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteFile(@PathParam("fileName") String fileName, 
+        @PathParam("currentPath") String path, @Context SecurityContext sec) {
+        //TODO: rozdzielnik dla path?
+        //TODO: sprawdz czy user jest wlascicilem pliku!
+        boolean isDeleted = systemController.deleteFile(path, fileName);
+       
+        //TODO: usuwanie z bazy ==> SPRAWDZIĆ 
+        systemController.deleteFileFromDB(path, fileName);
         
-        long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
-        long availableSpace = SystemController.MAX_STORAGE - folderSize;
-        
-        String outMessage = "Main folder size: " + folderSize + "kb \n" +
-                "Max: " + SystemController.MAX_STORAGE + "kb \n" +
-                "Available: " + availableSpace + "kb.";
-        
-        return Response.ok().entity(outMessage).build();
+        if(isDeleted) {
+            return Response.ok().entity("File has been deleted.").build();
+        }     
+        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
     }
     
+    @GET
+    @Path("/shareFile/{fileName}")
+    public Response shareFile(@PathParam("fileName") String fileName) {
+        return null;
+    }
+    
+    @GET
+    @Path("/unshareFile/{fileName}")
+    public Response unshareFile(@PathParam("fileName") String fileName) {
+        return null;
+    }
+    
+    @POST
+    @Path("/tagFile")
+    public Response tagFile(){
+        return null;
+    }
+
+    //------------------------------ [SYSTEM] ---------------------------------------
     @GET
     @Path("/getRemainingStorageSize")
     @Produces("text/plain")
     public Response getRemainingStorageSize(@Context SecurityContext sec) {
-        
-        try{
+
+        try {
             long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
             long availableSpace = SystemController.MAX_STORAGE - folderSize;
             Double availableSpaceD = availableSpace / 1000.0;
-            
+
             return Response.ok().entity(Double.toString(availableSpaceD)).build();
-        } catch(Exception e){
+        } catch (Exception e) {
             return Response.ok().entity("0").build();
         }
     }
@@ -160,5 +206,4 @@ public class SystemService {
 //        return Response.ok(folders, MediaType.APPLICATION_XML).build();
 //        return Response.ok(folders.get(0), MediaType.APPLICATION_XML).build();
     }
-    
 }

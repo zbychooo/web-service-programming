@@ -2,7 +2,6 @@ package com.rest.service;
 
 import com.rest.controller.UsersController;
 import com.sun.jersey.spi.resource.Singleton;
-import java.net.URI;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -49,15 +48,13 @@ public class UserService {
         System.out.println(out);
         
         return Response.status(Response.Status.OK).entity("OK").build();
-    }    
+    }
     
     @GET
-    @Path("/myfiles")
-    public Response getMyFiles(@Context SecurityContext sec){
-        
-        
-        
-        return null;
+    @Path("/getUserLogin")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getUserLogin(@Context SecurityContext sec){
+        return Response.ok().entity(sec.getUserPrincipal().getName()).build();
     }
     
 }
