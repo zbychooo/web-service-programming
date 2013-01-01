@@ -15,7 +15,7 @@
             <div id="menu">
                 <ul id="accountmenu">
                     <li >
-                        <a href="#">${folders.get(currentFolderIndex).user.username}</a>
+                        <a href="#">${user.username}</a>
                         <ul>
                             <li><a href="#">Account details</a></li>
                             <li><a href="#">Logout</a></li>
@@ -104,36 +104,6 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-                            <!--
-                            <tr>
-                                <td>
-                                    <input type="checkbox" id="select" />                                    
-                                </td>
-                                <td>
-                                    01 Stone Letter.mp3
-                                </td>
-                                <td>
-                                    7.43 MB
-                                </td>
-                                <td>
-                                    2012-10-10 03:57
-                                </td>
-                                <td>
-                                    MUSIC
-                                </td>
-                                <td>
-                                    <input type="checkbox" id="share" checked="true" disabled="true" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="tagfile" value="Tag" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="download" value="D" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="delete" value="X" /> 
-                                </td>
-                            </tr>-->
                         </tbody>
                     </table>
                     <br/>        
@@ -153,22 +123,26 @@
                                     <!-- click on "my folders" and the user should be redirected to the list of folders, where they can 
                                     add/delete/share/view them -->
                                     <h3><a href="#" >My folders </a></h3>
+                                    <c:set var="counter" value="${0}" />
                                     <c:forEach items="${folders}" var="folder">
                                         <ul>
-                                            <li><a href="#">${folder.name}</a></li>
+                                            <li><a href="rest/home/${counter}">${folder.name}</a></li>
                                         </ul>
+                                        <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
                                 </li>
 				<li>
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
                                     <h3><a href="#">Shared folders</a></h3>
+                                    <c:set var="counter" value="${0}" />
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.shared==true}" >
                                             <ul>
-                                                <li><a href="#">${folder.name}</a></li>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
                                             </ul>
                                         </c:if>
+                                        <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
                                 </li>
 				<li><a href="#">Watch porn</a></li>
