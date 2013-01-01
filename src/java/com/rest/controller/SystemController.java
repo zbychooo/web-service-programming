@@ -218,6 +218,7 @@ public class SystemController {
         try {
             
             DBConnector db = new DBConnector();
+            //TODO: tu jest dupa
             try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
