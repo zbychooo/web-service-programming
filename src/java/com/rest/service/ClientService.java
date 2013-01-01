@@ -1,6 +1,6 @@
 package com.rest.service;
 
-import com.rest.service.SystemService;
+import com.rest.client.SystemClient;
 import com.sun.jersey.spi.resource.Singleton;
 import java.net.URI;
 import java.util.HashMap;
@@ -21,6 +21,8 @@ import javax.ws.rs.core.SecurityContext;
 @Path("/")
 public class ClientService {
     
+    private SystemClient systemClient;
+    
     @GET
     @Path("/home")
     @Produces("text/html")
@@ -38,6 +40,9 @@ public class ClientService {
         try{
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             System.out.println("request is working :| ");
+            systemClient = new SystemClient(sec.getUserPrincipal().getName());
+            request.getSession().setAttribute("folders", systemClient.getFolderList());
+            System.out.println("request2");
         } catch(Exception e){
             System.out.println("request ain't workin'.");
         }

@@ -1,17 +1,32 @@
 package com.rest.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * User model class.
  * @author Zbyszko
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class User {
     
+    @XmlAttribute
     private Long uid;
+    @XmlElement
     private String login;
+    @XmlElement
     private String password;
+    @XmlElement
     private String username;
+    @XmlElement
     private String role;
 
+    public User(){}
+    
     public User(Long uid, String login, String password, String username, String role) {
         this.uid = uid;
         this.login = login;
