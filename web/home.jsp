@@ -15,7 +15,7 @@
             <div id="menu">
                 <ul id="accountmenu">
                     <li >
-                        <a href="#">my account</a>
+                        <a href="#">${folders.get(currentFolderIndex).user.username}</a>
                         <ul>
                             <li><a href="#">Account details</a></li>
                             <li><a href="#">Logout</a></li>
@@ -41,7 +41,7 @@
                         <input type="text" id="searchinlistinput" />
                         <input type="button" id="searchinlisttrigger" value="search" />
                         <br/>
-                        <p><strong>Current folder: Folder #1</strong></p>
+                        <p><strong>Current folder: ${folders.get(currentFolderIndex).name}</strong></p>
                     </div>
                     <br/>
                     <table>
@@ -71,6 +71,40 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <c:forEach items="${folders.get(currentFolderIndex).files}" var="file">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="select" /> 
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.name}" />
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.size/1000000}" /> MB
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.added}" />
+                                    </td>
+                                    <td>
+                                        <c:forEach items="${file.tags}" var="tag">
+                                            <c:out value="${tag}" />; 
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" id="share" checked="${folders.get(currentFolderIndex).shared}" disabled="true" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="tagfile" value="Tag" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="download" value="D" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="delete" value="X" /> 
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <!--
                             <tr>
                                 <td>
                                     <input type="checkbox" id="select" />                                    
@@ -99,7 +133,7 @@
                                 <td>
                                     <input type="button" id="delete" value="X" /> 
                                 </td>
-                            </tr>
+                            </tr>-->
                         </tbody>
                     </table>
                     <br/>        
@@ -129,9 +163,13 @@
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
                                     <h3><a href="#">Shared folders</a></h3>
-                                    <ul>
-                                        <li><a href="#">Folder #1</a></li>
-                                    </ul>
+                                    <c:forEach items="${folders}" var="folder">
+                                        <c:if test="${folder.shared==true}" >
+                                            <ul>
+                                                <li><a href="#">${folder.name}</a></li>
+                                            </ul>
+                                        </c:if>
+                                    </c:forEach>
                                 </li>
 				<li><a href="#">Watch porn</a></li>
                             </ul>
