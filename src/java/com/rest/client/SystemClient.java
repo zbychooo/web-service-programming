@@ -24,12 +24,10 @@ public class SystemClient {
     private String URL_BASE = "http://localhost:8080/RESTCloud/";
     private User currentUser;
         
-    public SystemClient(String username){
+    public SystemClient(User user){
         ClientConfig config = new DefaultClientConfig();
         client = Client.create(config);
-        UsersController uc = new UsersController();
-        currentUser = (User)uc.getUsers().get(username);
-        
+        currentUser = user;        
 
         String URL_DATA = "http://localhost:8080/RESTCloud/rest/systemService/foldername";
         String URL_DATA1 = "http://localhost:8080/RESTCloud/rest/systemService/folder";

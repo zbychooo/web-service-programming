@@ -1,6 +1,8 @@
 package com.rest.service;
 
 import com.rest.client.SystemClient;
+import com.rest.controller.UsersController;
+import com.rest.model.User;
 import com.sun.jersey.spi.resource.Singleton;
 import java.net.URI;
 import java.util.HashMap;
@@ -39,9 +41,12 @@ public class ClientService {
         System.out.println("actually inside the method "+(String)temp.getEntity());
         map.put("remainingSpace", (String)temp.getEntity());
         try{
+            UsersController uc = new UsersController();
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
+            request.getSession().setAttribute("user", currentUser);
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             System.out.println("request is working :| ");
-            systemClient = new SystemClient(sec.getUserPrincipal().getName());
+            systemClient = new SystemClient(currentUser);
             request.getSession().setAttribute("folders", systemClient.getFolderList());
             System.out.println("before cfi casting");
             request.getSession().setAttribute("currentFolderIndex", Long.valueOf(currentFolderIndex));
