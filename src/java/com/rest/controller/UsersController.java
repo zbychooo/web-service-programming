@@ -113,5 +113,9 @@ public class UsersController {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public Map<String, User> getUsers() {
+        return users;
+    }
     
 }

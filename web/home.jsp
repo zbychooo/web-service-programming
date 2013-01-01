@@ -104,7 +104,9 @@
                     </table>
                     <br/>        
                     <a href="rest/systemService/login">login</a> | <a href="upload.jsp">upload</a> |                    
-                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>            
+                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>                  
+                    <a href="rest/systemService/myfolders">MyFolders</a><br/>                            
+                    <a href="rest/systemService/folder">Folder</a><br/> 
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->
@@ -117,10 +119,11 @@
                                     <!-- click on "my folders" and the user should be redirected to the list of folders, where they can 
                                     add/delete/share/view them -->
                                     <h3><a href="#" >My folders </a></h3>
-                                    <ul>
-                                        <li class="activelink"><a href="#">Folder #1</a></li>
-                                        <li><a href="#">Folder #2</a></li>
-                                    </ul>
+                                    <c:forEach items="${folders}" var="folder">
+                                        <ul>
+                                            <li><a href="#">${folder.name}</a></li>
+                                        </ul>
+                                    </c:forEach>
                                 </li>
 				<li>
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 

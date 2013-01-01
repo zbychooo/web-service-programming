@@ -2,15 +2,14 @@ package com.rest.service;
 
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
-import com.sun.jersey.api.view.Viewable;
+import com.rest.model.Folder;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -18,10 +17,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 
 /**
  * System service class.
@@ -127,6 +123,47 @@ public class SystemService {
         } catch(Exception e){
             return Response.ok().entity("0").build();
         }
+    }
+    
+    @GET
+    @Path("/myfolders")
+    @Produces(MediaType.APPLICATION_XML) 
+//    public Response getCurrentUserFolders(@Context SecurityContext sec){
+    public List<Folder> getCurrentUserFolders(@Context SecurityContext sec){
+        List<Folder> folders = new ArrayList<>();
+        folders.add(new Folder(Long.valueOf(173),"folderek",false));
+        folders.add(new Folder(Long.valueOf(174),"kolejny glupi rok",true));
+        folders.add(new Folder(Long.valueOf(177),"The Vampire Diaries",true));
+//        ListResponse listResponse = new ListResponse(folders);
+//        GenericEntity entity = new GenericEntity<List<Folder>>(folders) {};
+        System.out.println("MY FOLDERS "+folders.size());
+        return folders;
+//        return Response.ok(folders, MediaType.APPLICATION_XML).build();
+//        return Response.ok(folders.get(0), MediaType.APPLICATION_XML).build();
+    }
+    
+    @Path("/postfolders")
+    @POST
+    public Collection<Folder> postRootElement(List<Folder> el) {
+        return el;
+    }
+    
+    @GET
+    @Path("/folder")
+    public Folder getFolder() {
+        return new Folder(Long.valueOf(9),"Ordinary Life",false);
+    }
+    
+    @GET
+    @Path("/foldername")
+    public String getFolderName(){
+        return "Ordinary Life";
+    }
+    
+    @GET
+    @Path("/myfolders1")
+    public String getFolderName1(){
+        return "chiasm";
     }
     
 }
