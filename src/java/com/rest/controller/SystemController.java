@@ -1,5 +1,6 @@
 package com.rest.controller;
 
+import com.rest.model.UserFiles;
 import com.utilities.DBConnector;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,9 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  * System Controller class.
@@ -120,7 +123,7 @@ public class SystemController {
         return -1;
     }
 
-    public long addFileInfoToDB(String fileName, long fileSize, String tags) {
+    public long addFileInfoToDB(String fileName, long fileSize, String tags, String path) {
 
         long id = 0;
         try {
@@ -135,6 +138,7 @@ public class SystemController {
                 statement.setLong(2, fileSize);
                 statement.setString(3, currentDate);
                 statement.setString(4, tags);
+                statement.setString(5, path);
                 statement.executeUpdate();
                 statement.close();
             }
@@ -186,41 +190,115 @@ public class SystemController {
         }
     }
 
-//    public String listUserFiles(String path){
+//    public long getUserId(String userlogin){
 //        
-//        File directory = new File(MAIN_STORAGE_FOLDER + path);
-//        File[] files = directory.listFiles();
-//        
-//        String fileList = ":: \n";
-//        for(File f : files) {
-//            if(f.isDirectory()) {
-//                fileList += f.getName() + " (directory) \n";
-//            } else {
-//                fileList += f.getName() + " size:" + f.length()/1024 + "kb \n";
+//        long userID = -1;
+//        try {
+//            DBConnector db = new DBConnector();
+//            String sqlQuery = "select id from users where login='" + userlogin + "'";
+//
+//            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+//                ResultSet rs = statement.executeQuery();
+//                while (rs.next()) {
+//                    userID = rs.getLong(1);
+//                }
 //            }
+//
+//            db.closeConnection();
+//
+//        } catch (SQLException | ClassNotFoundException ex) {
+//            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-//        return fileList;
 //        
+//        return userID;
 //    }
-//    
+    public ArrayList<UserFiles> getFilesList(String path) {
+        
+        ArrayList<UserFiles> files = new ArrayList<>();
+        try {
+            
+            DBConnector db = new DBConnector();
+            try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    files.add(new UserFiles(
+                            rs.getLong("id"), 
+                            rs.getString("fileName"), 
+                            rs.getLong("fileSize"), 
+                            rs.getString("dateStamp"),
+                            rs.getString("tagName"),
+                            rs.getString("directPath"))
+                            );
+                }
+                
+                rs.close();
+            }
+            db.closeConnection();
+
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return files;
+    }
+
+    public void deleteFileFromDB(String path, String fileName) {
+        //TODO: sprawdzić!!!! 
+        String sqlQuery = "";
+        long fileID = -1;
+        try {
+            DBConnector db = new DBConnector();
+            sqlQuery = "select id from files where fileName='" + fileName + "' and directPath='" + path + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    fileID = rs.getLong(1);
+                }
+            }
+
+            sqlQuery = "delete from files where fileName='" + fileName + "' and directPath='" + path + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeQuery();
+            }
+
+            sqlQuery = "delete from files_users where fileId='" + fileID + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeQuery();
+            }
+
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public boolean deleteFile(String path, String fileName) {
         //System.out.println(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
         File file = new File(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
         return file.delete();
     }
 
-//    public void deleteFolder(String path) {
-//        File directory = new File(MAIN_STORAGE_FOLDER + path);
-//        File[] files = directory.listFiles();
-//        if (files != null) { //some JVMs return null for empty dirs
-//            for (File f : files) {
-//                if (f.isDirectory()) {
-//                    deleteFolder(f.getName());
-//                } else {
-//                    f.delete();
-//                }
-//            }
-//        }
-//        directory.delete();
-//    }
+    public boolean deleteFolder(String path) {
+        path = MAIN_STORAGE_FOLDER + path;
+        return this.deleteFolder(new File(path));
+    }
+
+    private boolean deleteFolder(File directory) {
+
+        File[] files = directory.listFiles();
+        if (files != null) { //some JVMs return null for empty dirs
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        return directory.delete();
+    }
 }
