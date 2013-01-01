@@ -2,13 +2,15 @@ package com.rest.service;
 
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
-import com.sun.jersey.api.view.Viewable;
+import com.rest.model.Folder;
 import com.rest.model.User;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
