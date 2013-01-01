@@ -3,12 +3,13 @@ package com.rest.service;
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
 import com.rest.model.Folder;
+import com.rest.model.User;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -130,40 +131,34 @@ public class SystemService {
     @Produces(MediaType.APPLICATION_XML) 
 //    public Response getCurrentUserFolders(@Context SecurityContext sec){
     public List<Folder> getCurrentUserFolders(@Context SecurityContext sec){
-        List<Folder> folders = new ArrayList<>();
-        folders.add(new Folder(Long.valueOf(173),"folderek",false));
-        folders.add(new Folder(Long.valueOf(174),"kolejny glupi rok",true));
-        folders.add(new Folder(Long.valueOf(177),"The Vampire Diaries",true));
+        List<Folder> folders = new ArrayList<>(); 
+        
+        List<com.rest.model.File> files2 = new ArrayList<>();
+        List<String> tags2 = new ArrayList<>();
+        tags2.add("TV-Series");
+        tags2.add("Favorites");
+        files2.add(new com.rest.model.File(Long.valueOf(1), "S01E01.avi", new Date(),Long.valueOf(351310000),tags2));        
+        files2.add(new com.rest.model.File(Long.valueOf(2), "S01E02.avi", new Date(),Long.valueOf(350610000),tags2));        
+        files2.add(new com.rest.model.File(Long.valueOf(3), "S01E03.avi", new Date(),Long.valueOf(351610070),tags2));
+        folders.add(new Folder(Long.valueOf(177),
+                new User(Long.valueOf(10),"seba1","","Seba","user"),"The Vampire Diaries",true,files2));
+        
+        List<com.rest.model.File> files1 = new ArrayList<>();
+        files1.add(new com.rest.model.File(Long.valueOf(1), "01 3 Hours.mp3", new Date(),Long.valueOf(7310000),new ArrayList<String>()));
+        List<String> tags = new ArrayList<>();
+        tags.add("MUSIC");
+        files1.add(new com.rest.model.File(Long.valueOf(2), "01 Common exchange.mp3", new Date(),Long.valueOf(6610000),tags));
+        folders.add(new Folder(Long.valueOf(173),
+                new User(Long.valueOf(9),"seba","seba","Seba","user"),"folderek",false,files1));
+        
+        folders.add(new Folder(Long.valueOf(174),new User(),"kolejny glupi rok",true));
+        
 //        ListResponse listResponse = new ListResponse(folders);
 //        GenericEntity entity = new GenericEntity<List<Folder>>(folders) {};
         System.out.println("MY FOLDERS "+folders.size());
         return folders;
 //        return Response.ok(folders, MediaType.APPLICATION_XML).build();
 //        return Response.ok(folders.get(0), MediaType.APPLICATION_XML).build();
-    }
-    
-    @Path("/postfolders")
-    @POST
-    public Collection<Folder> postRootElement(List<Folder> el) {
-        return el;
-    }
-    
-    @GET
-    @Path("/folder")
-    public Folder getFolder() {
-        return new Folder(Long.valueOf(9),"Ordinary Life",false);
-    }
-    
-    @GET
-    @Path("/foldername")
-    public String getFolderName(){
-        return "Ordinary Life";
-    }
-    
-    @GET
-    @Path("/myfolders1")
-    public String getFolderName1(){
-        return "chiasm";
     }
     
 }

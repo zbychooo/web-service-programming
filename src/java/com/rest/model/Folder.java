@@ -1,10 +1,8 @@
 package com.rest.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.*;
 
 /**
  *
@@ -16,21 +14,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Folder {
     @XmlAttribute
     private Long id;
-//    @XmlElement
-//    private User user;
+    @XmlElement
+    private User user;
     @XmlElement
     private String name;
     @XmlElement
     private Boolean shared;
-
-    public Folder(){}    
     
-    public Folder(Long id, //User user,
+    @XmlElementWrapper(name="files")
+    @XmlElement(name="file")
+    private List<File> files;
+
+    public Folder(){
+        this.files = new ArrayList<>();
+    }    
+    
+    public Folder(Long id, User user,
             String name, Boolean shared){
         this.id = id;
-//        this.user = user;
+        this.user = user;
         this.name = name;
         this.shared = shared;
+        this.files = new ArrayList<>();
+    }
+
+    public Folder(Long id, User user, String name, Boolean shared, List<File> files) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.shared = shared;
+        this.files = files;
     }
     
     public Long getId() {
@@ -57,17 +70,25 @@ public class Folder {
         this.shared = shared;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public String toString() {
         return "Folder{" + "id=" + id + ", name=" + name + ", shared=" + shared + '}';
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
     
     
