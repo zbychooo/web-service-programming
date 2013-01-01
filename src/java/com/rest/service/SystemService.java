@@ -45,7 +45,8 @@ public class SystemService {
     @POST
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response createFolder(@FormParam("foldername") String folderName, @Context SecurityContext sec) {
+    public Response createFolder(@FormParam("foldername") String folderName, 
+        @FormParam("path") String path, @Context SecurityContext sec) {
 
 
         boolean isCreated = systemController.createFolder(
@@ -53,7 +54,7 @@ public class SystemService {
                 sec.getUserPrincipal().getName());
 
         if (isCreated) {
-            long dirId = systemController.addFileInfoToDB(folderName, 0, "-");
+            long dirId = systemController.addFileInfoToDB(folderName, 0, "DIRECTORY",path); 
             systemController.joinFileAndOwner(dirId, sec.getUserPrincipal().getName());
             return Response.ok().entity("isCreated: " + isCreated).build();
         }
@@ -64,15 +65,22 @@ public class SystemService {
     @GET
     @Path("/openFolder/{directoryName}")
     @Produces(MediaType.TEXT_HTML)
-    public Response openFolder(@PathParam("directoryName") String directoryName) {
-        
-        return Response.ok().entity("<h1>AAA</h1> <p> bbbb</p>").build();
+    public Response openFolder(@PathParam("directoryPath") String directoryPath, @Context SecurityContext sec) {
+     
+        return null;//Response.ok().entity("<h1>AAA</h1> <p> bbbb</p>").build();
     }
 
     @GET
-    @Path("/deleteFolder/{directoryName}")
-    public Response deleteFolder(@PathParam("directoryName") String directoryName) {
-        return null;
+    @Path("/deleteFolder/{directoryPath}")
+    public Response deleteFolder(@PathParam("directoryPath") String directoryPath) {
+        //directoryPath = "admin//sylwek";
+        //TODO: rozdzielnik dla path
+        //TODO: usuwanie z bazy
+        boolean isDeleted = systemController.deleteFolder(directoryPath);
+        if(isDeleted) {
+            return Response.ok().entity("Folder has been deleted").build();
+        }
+        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
     }
 
     //--------------------- [FILES] ---------------------------
@@ -85,7 +93,7 @@ public class SystemService {
             @FormDataParam("tags") String tags, @FormDataParam("path") String path,
             @Context SecurityContext sec) {
 
-        path = ""; //TODO: zmienic!!!
+        path = "admin"; //TODO: hardcoded, zmienic!!!
         String userlogin = sec.getUserPrincipal().getName();
         if (userlogin == null) {
             return Response.serverError().build();
@@ -98,7 +106,7 @@ public class SystemService {
         }
 
         // zapisanie informacji o pliku w bazie danych
-        long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tags);
+        long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tags, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
 
@@ -114,9 +122,14 @@ public class SystemService {
     @GET
     @Path("/deleteFile/{currentPath}/{fileName}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response deleteFile(@PathParam("fileName") String fileName, @PathParam("currentPath") String path) {
-        //rozdzielnik dla path? 
+    public Response deleteFile(@PathParam("fileName") String fileName, 
+        @PathParam("currentPath") String path, @Context SecurityContext sec) {
+        //TODO: rozdzielnik dla path?
+        //TODO: sprawdz czy user jest wlascicilem pliku!
         boolean isDeleted = systemController.deleteFile(path, fileName);
+       
+        //TODO: usuwanie z bazy ==> SPRAWDZIĆ 
+        systemController.deleteFileFromDB(path, fileName);
         
         if(isDeleted) {
             return Response.ok().entity("File has been deleted.").build();
