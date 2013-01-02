@@ -52,11 +52,11 @@ public class SystemService {
     public Response createFolder(@FormParam("folderName") String folderName, @Context SecurityContext sec) {
 
         String login = sec.getUserPrincipal().getName();
-        //dziala, ale trzeba sie zalogowac...
+
         boolean isCreated = systemController.createFolder(
                 folderName, login);
         
-        String path = login +  "//" + folderName; //TODO: this is hardcoded uri
+        String path = login +  "//" + folderName;
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndOwner(folderId, login);
@@ -75,7 +75,7 @@ public class SystemService {
         @Context SecurityContext sec) {
 
         String userlogin = sec.getUserPrincipal().getName();
-        path = userlogin + "//" + path; //TODO: hardcoded!!:)
+        path = userlogin + "//" + path; 
         
         if(userlogin==null){
             return Response.serverError().build();
@@ -123,14 +123,21 @@ public class SystemService {
     @Path("/deleteFile/{folderPath}/{fileName}")
     public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
 
-        path = sec.getUserPrincipal().getName() + path; 
-        boolean isDeleted = systemController.deleteFile(path, fileName);
-        if(isDeleted){
-            systemController.deleteFileFromDB(path, fileName);
-            return Response.ok().entity("ok").build();
+        String login = sec.getUserPrincipal().getName();
+        path = login + "//" + path; 
+        
+        boolean isDeleted = systemController.deleteFileFromDB(path, fileName, login);
+        System.out.println("check: " + isDeleted);
+        if(!isDeleted) {
+            return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+        }
+        isDeleted = systemController.deleteFile(path, fileName);
+        
+        if(!isDeleted){
+            return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
         
-        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+        return Response.ok().entity("ok").build();
     }
     
     @GET
