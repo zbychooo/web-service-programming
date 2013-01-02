@@ -134,9 +134,9 @@
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
                                     <h3><a href="#">Shared folders</a></h3>
-                                    <c:set var="counter" value="${0}" />
+                                    <c:set var="counter" value="${0}" /> 
                                     <c:forEach items="${folders}" var="folder">
-                                        <c:if test="${folder.shared==true}" >
+                                        <c:if test="${folder.shared.isEmpty()!=true}" >
                                             <ul>
                                                 <li><a href="rest/home/${counter}">${folder.name}</a></li>
                                             </ul>
