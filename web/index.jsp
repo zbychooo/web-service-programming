@@ -5,11 +5,11 @@
         <meta http-equiv="refresh" content="0; URL='rest/home/0'" />
     </head>
     <body>
-                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>
+<!--                    <a href="rest/systemService/getAvailableStorageSize">get total space size</a><br/>
                     <a href="rest/userService/myfiles">my files </a> |
                     <form method="POST" action="rest/systemService/createFolder">
-                        <input type="text" name="foldername"> <input type="submit" value="New folder">
-                    </form>
+                        <input type="text" name="foldername" /> <input type="submit" value="New folder" />
+                    </form>-->
                     
                     
     </body>
