@@ -90,20 +90,20 @@ public class SystemService {
         // zapisanie informacji o pliku w bazie danych
         Long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tag, path);
         // zapisanie informacji o właścicielu pliku
-        systemController.joinFileAndOwner(fileId, userlogin);
+        systemController.joinFileAndFolder(fileId, path);
 
         return Response.ok().entity("File is up.").build();
     }
 
     @GET
-    @Path("/shareFile/{filePath}/{fileName}")
-    public Response shareFile(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName){
+    @Path("/shareFolder/{filePath}")
+    public Response shareFile(@PathParam("filePath") String filePath){
         return null;
     }
     
     @GET
-    @Path("/unshareFile/{filePath}/{fileName}")
-     public Response unshareFile(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName){
+    @Path("/unshareFolder/{filePath}")
+     public Response unshareFile(@PathParam("filePath") String filePath){
         return null;
     }   
     
@@ -118,7 +118,7 @@ public class SystemService {
     public Response deleteFolder(@PathParam("folderPath") String path, @Context SecurityContext sec){
         path = sec.getUserPrincipal().getName() + "//" + path;
         boolean isDeleted = systemController.deleteFolder(path);
-        //usuwanie z bazy
+        //TODO: usuwanie z bazy
         return Response.ok().entity("ok: " + isDeleted).build();
     }
     
