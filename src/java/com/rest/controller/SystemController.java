@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * System Controller class.
  *
@@ -122,12 +121,12 @@ public class SystemController {
         return Long.valueOf(-1);
     }
 
-    private String getCurrentDateStamp(){
-            Date date = new java.util.Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            return dateFormat.format(date);
+    private String getCurrentDateStamp() {
+        Date date = new java.util.Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return dateFormat.format(date);
     }
-    
+
     public Long addFileInfoToDB(String fileName, Long fileSize, String tags, String path) {
 
         long id = 0;
@@ -193,8 +192,8 @@ public class SystemController {
         }
     }
 
-    public Long addFolderInfoToDB(String folderName, String path){
-        
+    public Long addFolderInfoToDB(String folderName, String path) {
+
         long id = 0;
         try {
             DBConnector db = new DBConnector();
@@ -225,9 +224,9 @@ public class SystemController {
 
         return id;
     }
-    
-    public void joinFolderAndOwner(Long folderID, String login){
-                long userID = 0;
+
+    public void joinFolderAndOwner(Long folderID, String login) {
+        long userID = 0;
         try {
             DBConnector db = new DBConnector();
             String sqlQuery = "select id from users where login='" + login + "'";
@@ -238,7 +237,7 @@ public class SystemController {
                     userID = rs.getLong(1);
                 }
             }
-            
+
             System.out.println("userid: " + userID + " folderid: " + folderID);
             String sqlQuery2 = "insert into folders_users(userId, folderId, isOwner) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
@@ -255,8 +254,8 @@ public class SystemController {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     public void deleteFileFromDB(String path, String fileName) {
+
+    public void deleteFileFromDB(String path, String fileName) {
         //TODO: sprawdzić!!!! 
         String sqlQuery = "";
         Long fileID = Long.valueOf(-1);
@@ -270,17 +269,17 @@ public class SystemController {
                     fileID = rs.getLong(1);
                 }
             }
-
+            System.out.println("DELETE: fileID " + fileID + "\npath: " + path + "\nfilename: " + fileName);
             sqlQuery = "delete from files where fileName='" + fileName + "' and directPath='" + path + "'";
 
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                statement.executeQuery();
+                statement.executeUpdate();
             }
 
             sqlQuery = "delete from files_users where fileId='" + fileID + "'";
 
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                statement.executeQuery();
+                statement.executeUpdate();
             }
 
             db.closeConnection();
@@ -296,11 +295,21 @@ public class SystemController {
         return file.delete();
     }
 
+    /**
+     * @deprecated 
+     * @param path
+     * @return 
+     */
     public boolean deleteFolder(String path) {
         path = MAIN_STORAGE_FOLDER + path;
         return this.deleteFolder(new File(path));
     }
 
+    /**
+     * @deprecated 
+     * @param directory
+     * @return 
+     */
     private boolean deleteFolder(File directory) {
 
         File[] files = directory.listFiles();

@@ -75,7 +75,7 @@ public class SystemService {
         @Context SecurityContext sec) {
 
         String userlogin = sec.getUserPrincipal().getName();
-        path = userlogin + "//" + path; //TODO: miec na uwadze!!:)
+        path = userlogin + "//" + path; //TODO: hardcoded!!:)
         
         if(userlogin==null){
             return Response.serverError().build();
@@ -121,8 +121,16 @@ public class SystemService {
     
     @GET
     @Path("/deleteFile/{folderPath}/{fileName}")
-    public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName){
-        return null;
+    public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+
+        path = sec.getUserPrincipal().getName() + path; 
+        boolean isDeleted = systemController.deleteFile(path, fileName);
+        if(isDeleted){
+            systemController.deleteFileFromDB(path, fileName);
+            return Response.ok().entity("ok").build();
+        }
+        
+        return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
     }
     
     @GET
