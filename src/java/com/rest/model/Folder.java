@@ -18,8 +18,9 @@ public class Folder {
     private User user;
     @XmlElement
     private String name;
-    @XmlElement
-    private Boolean shared;
+    @XmlElementWrapper(name="sharedToUsers")
+    @XmlElement(name="user")
+    private List<User> shared;
     
     @XmlElementWrapper(name="files")
     @XmlElement(name="file")
