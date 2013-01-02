@@ -1,6 +1,5 @@
 package com.rest.controller;
 
-import com.rest.model.UserFile;
 import com.utilities.DBConnector;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -190,58 +188,37 @@ public class SystemController {
         }
     }
 
-//    public long getUserId(String userlogin){
+// metoda wymagap przetesowania i przemyslenia, nie uzywać!
+//    public ArrayList<UserFile> getFilesList(String path) {
 //        
-//        long userID = -1;
+//        ArrayList<UserFile> files = new ArrayList<>();
 //        try {
+//            
 //            DBConnector db = new DBConnector();
-//            String sqlQuery = "select id from users where login='" + userlogin + "'";
-//
-//            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+//            //TODO: tu jest dupa
+//            try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
 //                ResultSet rs = statement.executeQuery();
 //                while (rs.next()) {
-//                    userID = rs.getLong(1);
+//                    files.add(new UserFile(
+//                            rs.getLong("id"), 
+//                            rs.getString("fileName"), 
+//                            rs.getLong("fileSize"), 
+//                            rs.getString("dateStamp"),
+//                            rs.getString("tagName"),
+//                            rs.getString("directPath"))
+//                            );
 //                }
+//                
+//                rs.close();
 //            }
-//
 //            db.closeConnection();
 //
-//        } catch (SQLException | ClassNotFoundException ex) {
+//        } catch (ClassNotFoundException | SQLException ex) {
 //            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-//        
-//        return userID;
+//
+//        return files;
 //    }
-    public ArrayList<UserFile> getFilesList(String path) {
-        
-        ArrayList<UserFile> files = new ArrayList<>();
-        try {
-            
-            DBConnector db = new DBConnector();
-            //TODO: tu jest dupa
-            try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
-                ResultSet rs = statement.executeQuery();
-                while (rs.next()) {
-                    files.add(new UserFile(
-                            rs.getLong("id"), 
-                            rs.getString("fileName"), 
-                            rs.getLong("fileSize"), 
-                            rs.getString("dateStamp"),
-                            rs.getString("tagName"),
-                            rs.getString("directPath"))
-                            );
-                }
-                
-                rs.close();
-            }
-            db.closeConnection();
-
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return files;
-    }
 
     public void deleteFileFromDB(String path, String fileName) {
         //TODO: sprawdzić!!!! 
