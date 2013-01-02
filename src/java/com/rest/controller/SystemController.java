@@ -360,7 +360,7 @@ public class SystemController {
             //get from folders_sers the connections
             //store them all
             //get the folder objects from those 
-            String query = "select * from folders_users where userId=?";
+            String query = "select * from users_folders where userId=?";
             try (PreparedStatement statement = db.getConnection().prepareStatement(query)) {
                 statement.setLong(1, user.getUid());
                 ResultSet rs = statement.executeQuery();
@@ -375,7 +375,7 @@ public class SystemController {
                                 Folder currentFolder = new Folder(rs1.getLong("id"),user,rs1.getString("name"),
                                             rs1.getString("dateStamp"),rs1.getString("directPath"));
                                 //get users that can read this folder
-                                try (PreparedStatement statement2 = db.getConnection().prepareStatement("select * from folders_users where folderId=?")) {
+                                try (PreparedStatement statement2 = db.getConnection().prepareStatement("select * from users_folders where folderId=?")) {
                                     statement2.setLong(1, fid);
                                     ResultSet rs2 = statement2.executeQuery();
                                     List<User> sharingUsers = new ArrayList<>();                                    
