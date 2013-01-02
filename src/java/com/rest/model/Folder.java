@@ -21,13 +21,25 @@ public class Folder {
     @XmlElementWrapper(name="sharedToUsers")
     @XmlElement(name="user")
     private List<User> shared;
+    @XmlElement
+    private String dateStamp;
+    @XmlElement
+    private String directPath;
     
     @XmlElementWrapper(name="files")
     @XmlElement(name="file")
     private List<UserFile> files;
 
     public Folder(){
+        this.shared = new ArrayList<>();
         this.files = new ArrayList<>();
+    }
+
+    public Folder(Long id, User user, String name, String dateStamp, String directPath) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.dateStamp = dateStamp;
     }
 
     public Folder(Long id, User user, String name) {
