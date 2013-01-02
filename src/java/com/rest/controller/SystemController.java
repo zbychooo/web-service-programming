@@ -1,5 +1,7 @@
 package com.rest.controller;
 
+import com.rest.model.Folder;
+import com.rest.model.User;
 import com.utilities.DBConnector;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,7 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -347,5 +351,73 @@ public class SystemController {
             }
         }
         return directory.delete();
+    }
+    
+    public List<Folder> getUserFolders(User user){
+        List<Folder> folders = new ArrayList<>();
+        try {
+            DBConnector db = new DBConnector();
+//            
+            //get from folders_sers the connections
+            //store them all
+            //get the folder objects from those 
+            String query = "select * from folders_users where userId=?";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(query)) {
+                statement.setLong(1, user.getUid());
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    long fid = rs.getLong("folderId");
+                    Boolean owner = rs.getBoolean("isOwner");
+                    if(owner){
+                        try (PreparedStatement statement1 = db.getConnection().prepareStatement("select * from folders where id=?")) {
+                            statement1.setLong(1, fid);
+                            ResultSet rs1 = statement1.executeQuery();
+                            while (rs1.next()) {
+                                Folder currentFolder = new Folder(rs1.getLong("id"),user,rs1.getString("name"),
+                                            rs1.getString("dateStamp"),rs1.getString("directPath"));
+                                //get users that can read this folder
+                                try (PreparedStatement statement2 = db.getConnection().prepareStatement("select * from folders_users where folderId=?")) {
+                                    statement2.setLong(1, fid);
+                                    ResultSet rs2 = statement2.executeQuery();
+                                    List<User> sharingUsers = new ArrayList<>();                                    
+                                    while(rs2.next()){
+                                        sharingUsers.add(getUser(rs2.getLong("userId"),db));
+                                    }
+                                    currentFolder.setShared(sharingUsers);
+                                }
+                                //finally add to the list
+                                folders.add(currentFolder);
+                            }
+                        }
+                    }
+                }
+                rs.close();
+            }
+            
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return folders;
+    }
+    
+    private User getUser(Long uid,DBConnector db){
+        User user = null;
+        String sqlQuery = "select * from users where login=?";
+        try{
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.setLong(1, uid);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    user = new User(uid,rs.getString("login"),rs.getString("password"),rs.getString("username"),rs.getString("role"));
+                }
+                rs.close();
+            }
+        } catch(Exception ex){
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
