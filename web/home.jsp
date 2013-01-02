@@ -15,7 +15,7 @@
             <div id="menu">
                 <ul id="accountmenu">
                     <li >
-                        <a href="#">my account</a>
+                        <a href="#">${user.username}</a>
                         <ul>
                             <li><a href="#">Account details</a></li>
                             <li><a href="#">Logout</a></li>
@@ -41,7 +41,7 @@
                         <input type="text" id="searchinlistinput" />
                         <input type="button" id="searchinlisttrigger" value="search" />
                         <br/>
-                        <p><strong>Current folder: Folder #1</strong></p>
+                        <p><strong>Current folder: ${folders.get(currentFolderIndex).name}</strong></p>
                     </div>
                     <br/>
                     <table>
@@ -71,35 +71,39 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" id="select" />                                    
-                                </td>
-                                <td>
-                                    01 Stone Letter.mp3
-                                </td>
-                                <td>
-                                    7.43 MB
-                                </td>
-                                <td>
-                                    2012-10-10 03:57
-                                </td>
-                                <td>
-                                    MUSIC
-                                </td>
-                                <td>
-                                    <input type="checkbox" id="share" checked="true" disabled="true" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="tagfile" value="Tag" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="download" value="D" /> 
-                                </td>
-                                <td>
-                                    <input type="button" id="delete" value="X" /> 
-                                </td>
-                            </tr>
+                           <c:forEach items="${folders.get(currentFolderIndex).files}" var="file">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="select" /> 
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.fileName}" />
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.fileSize/1000000}" /> MB
+                                    </td>
+                                    <td>
+                                        <c:out value="${file.dateStamp}" />
+                                    </td>
+                                    <td>
+                                        <c:forEach items="${file.tagName}" var="tag">
+                                            <c:out value="${tag}" />; 
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" id="share" checked="${folders.get(currentFolderIndex).shared}" disabled="true" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="tagfile" value="Tag" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="download" value="D" /> 
+                                    </td>
+                                    <td>
+                                        <input type="button" id="delete" value="X" /> 
+                                    </td>
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
                     <br/>        
@@ -118,18 +122,27 @@
                                     <!-- click on "my folders" and the user should be redirected to the list of folders, where they can 
                                     add/delete/share/view them -->
                                     <h3><a href="#" >My folders </a></h3>
-                                    <ul>
-                                        <li class="activelink"><a href="#">Folder #1</a></li>
-                                        <li><a href="#">Folder #2</a></li>
-                                    </ul>
+                                    <c:set var="counter" value="${0}" />
+                                    <c:forEach items="${folders}" var="folder">
+                                        <ul>
+                                            <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                        </ul>
+                                        <c:set var="counter" value="${counter+1}" />
+                                    </c:forEach>
                                 </li>
 				<li>
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
                                     <h3><a href="#">Shared folders</a></h3>
-                                    <ul>
-                                        <li><a href="#">Folder #1</a></li>
-                                    </ul>
+                                    <c:set var="counter" value="${0}" />
+                                    <c:forEach items="${folders}" var="folder">
+                                        <c:if test="${folder.shared==true}" >
+                                            <ul>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                            </ul>
+                                        </c:if>
+                                        <c:set var="counter" value="${counter+1}" />
+                                    </c:forEach>
                                 </li>
 				<li><a href="#">Watch porn</a></li>
                             </ul>

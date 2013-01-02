@@ -23,7 +23,7 @@ public class Folder {
     
     @XmlElementWrapper(name="files")
     @XmlElement(name="file")
-    private List<File> files;
+    private List<UserFile> files;
 
     public Folder(){
         this.files = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Folder {
         this.files = new ArrayList<>();
     }
 
-    public Folder(Long id, User user, String name, Boolean shared, List<File> files) {
+    public Folder(Long id, User user, String name, Boolean shared, List<UserFile> files) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -83,11 +83,11 @@ public class Folder {
         return "Folder{" + "id=" + id + ", name=" + name + ", shared=" + shared + '}';
     }
 
-    public List<File> getFiles() {
+    public List<UserFile> getFiles() {
         return files;
     }
 
-    public void setFiles(List<File> files) {
+    public void setFiles(List<UserFile> files) {
         this.files = files;
     }
     

@@ -1,6 +1,6 @@
 package com.rest.controller;
 
-import com.rest.model.UserFiles;
+import com.rest.model.UserFile;
 import com.utilities.DBConnector;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,7 +70,7 @@ public class SystemController {
         return (this.calculateFolderSize(directory, 0) / 1024);
     }
 
-    private long calculateFolderSize(File directory, long length) {
+    private Long calculateFolderSize(File directory, long length) {
 
         for (File file : directory.listFiles()) {
             if (file.isFile()) {
@@ -91,7 +91,7 @@ public class SystemController {
      * @param userlogin
      * @return
      */
-    public long uploadFile(InputStream in, String info,
+    public Long uploadFile(InputStream in, String info,
             String path, String userlogin) {
 
         String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
@@ -120,10 +120,10 @@ public class SystemController {
             Logger.getLogger(SystemController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return -1;
+        return Long.valueOf(-1);
     }
 
-    public long addFileInfoToDB(String fileName, long fileSize, String tags, String path) {
+    public Long addFileInfoToDB(String fileName, Long fileSize, String tags, String path) {
 
         long id = 0;
         try {
@@ -212,9 +212,9 @@ public class SystemController {
 //        
 //        return userID;
 //    }
-    public ArrayList<UserFiles> getFilesList(String path) {
+    public ArrayList<UserFile> getFilesList(String path) {
         
-        ArrayList<UserFiles> files = new ArrayList<>();
+        ArrayList<UserFile> files = new ArrayList<>();
         try {
             
             DBConnector db = new DBConnector();
@@ -222,7 +222,7 @@ public class SystemController {
             try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    files.add(new UserFiles(
+                    files.add(new UserFile(
                             rs.getLong("id"), 
                             rs.getString("fileName"), 
                             rs.getLong("fileSize"), 
@@ -246,7 +246,7 @@ public class SystemController {
     public void deleteFileFromDB(String path, String fileName) {
         //TODO: sprawdzić!!!! 
         String sqlQuery = "";
-        long fileID = -1;
+        Long fileID = Long.valueOf(-1);
         try {
             DBConnector db = new DBConnector();
             sqlQuery = "select id from files where fileName='" + fileName + "' and directPath='" + path + "'";
