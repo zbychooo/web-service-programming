@@ -131,8 +131,8 @@ public class SystemController {
         return dateFormat.format(date);
     }
 
-    private Long getUserId(String login){
-        
+    private Long getUserId(String login) {
+
         long userID = -1;
         try {
             DBConnector db = new DBConnector();
@@ -143,6 +143,7 @@ public class SystemController {
                 while (rs.next()) {
                     userID = rs.getLong(1);
                 }
+                statement.close();
             }
             System.out.println("userid: " + userID);
             db.closeConnection();
@@ -152,7 +153,7 @@ public class SystemController {
         }
         return userID;
     }
-    
+
     public Long addFileInfoToDB(String fileName, Long fileSize, String tags, String path) {
 
         long id = 0;
@@ -178,6 +179,7 @@ public class SystemController {
                 while (rs.next()) {
                     id = rs.getLong(1);
                 }
+                statement.close();
             }
             db.closeConnection();
 
@@ -188,20 +190,27 @@ public class SystemController {
         return id;
     }
 
-    public void joinFileAndOwner(long fileID, String login) {
+    public void joinFileAndFolder(long fileID, String path) {
 
+        long folderID = 0;
         try {
-            long userID = getUserId(login);
             DBConnector db = new DBConnector();
-            String sqlQuery2 = "insert into files_users(userId, fileId, isOwner) values(?,?,?)";
-            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
-                statement.setLong(1, userID);
-                statement.setLong(2, fileID);
-                statement.setLong(3, 1); //isOwner=1
-                statement.executeUpdate();
+            String sqlQuery = "select id from folders where directPath='" + path + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    folderID = rs.getLong(1);
+                }
                 statement.close();
             }
 
+            String sqlQuery2 = "insert into folders_files(fileId, folderId) values(?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                statement.setLong(1, fileID);
+                statement.setLong(2, folderID);
+                statement.executeUpdate();
+                statement.close();
+            }
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
@@ -247,11 +256,11 @@ public class SystemController {
         try {
             long userID = getUserId(login);
             DBConnector db = new DBConnector();
-            String sqlQuery2 = "insert into folders_users(userId, folderId, isOwner) values(?,?,?)";
-            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+            String sqlQuery = "insert into users_folders(userId, folderId, isOwner) values(?,?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setLong(1, userID);
                 statement.setLong(2, folderID);
-                statement.setString(3, "TRUE");
+                statement.setLong(3, 1);
                 statement.executeUpdate();
                 statement.close();
             }
@@ -268,7 +277,7 @@ public class SystemController {
         int isOwner = 0;
         Long fileID = Long.valueOf(-1);
         Long userID;
-        
+
         try {
             DBConnector db = new DBConnector();
             System.out.println("check, path:" + path + " filename:" + fileName + " login:" + login);
@@ -278,38 +287,51 @@ public class SystemController {
                 while (rs.next()) {
                     fileID = rs.getLong(1);
                 }
+                statement.close();
             }
-            
+
             //checks onwership:
             userID = getUserId(login);
             System.out.println("userid: " + userID + " fileID: " + fileID);
-            
-            sqlQuery = "select isOwner from files_users where userId='" + userID + "' and fileId='" + fileID + "'";
+            long folderID = 0;
+            sqlQuery = "select id from folders where directPath='" + path + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    folderID = rs.getInt(1);
+                }
+                statement.close();
+            }
+
+            sqlQuery = "select isOwner from users_folders where userId='" + userID + "' and folderId='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     isOwner = rs.getInt(1);
                 }
+                statement.close();
             }
-            
+
             System.out.println("isOwner: " + isOwner);
-            if(isOwner == 0) {
+            if (isOwner == 0) {
                 return false;
             }
-                       
+
             //System.out.println("DELETE: fileID " + fileID + "\npath: " + path + "\nfilename: " + fileName);
             sqlQuery = "delete from files where fileName='" + fileName + "' and directPath='" + path + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.executeUpdate();
+                statement.close();
             }
 
-            sqlQuery = "delete from files_users where fileId='" + fileID + "'";
+            sqlQuery = "delete from folders_files where fileId='" + fileID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.executeUpdate();
+                statement.close();
             }
-
             db.closeConnection();
-            return true;         
+            
+            return true;
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -341,8 +363,8 @@ public class SystemController {
         }
         return directory.delete();
     }
-    
-    public List<Folder> getUserFolders(User user){
+
+    public List<Folder> getUserFolders(User user) {
         List<Folder> folders = new ArrayList<>();
         try {
             DBConnector db = new DBConnector();
@@ -357,20 +379,20 @@ public class SystemController {
                 while (rs.next()) {
                     long fid = rs.getLong("folderId");
                     Boolean owner = rs.getBoolean("isOwner");
-                    if(owner){
+                    if (owner) {
                         try (PreparedStatement statement1 = db.getConnection().prepareStatement("select * from folders where id=?")) {
                             statement1.setLong(1, fid);
                             ResultSet rs1 = statement1.executeQuery();
                             while (rs1.next()) {
-                                Folder currentFolder = new Folder(rs1.getLong("id"),user,rs1.getString("name"),
-                                            rs1.getString("dateStamp"),rs1.getString("directPath"));
+                                Folder currentFolder = new Folder(rs1.getLong("id"), user, rs1.getString("name"),
+                                        rs1.getString("dateStamp"), rs1.getString("directPath"));
                                 //get users that can read this folder
                                 try (PreparedStatement statement2 = db.getConnection().prepareStatement("select * from folders_users where folderId=?")) {
                                     statement2.setLong(1, fid);
                                     ResultSet rs2 = statement2.executeQuery();
-                                    List<User> sharingUsers = new ArrayList<>();                                    
-                                    while(rs2.next()){
-                                        sharingUsers.add(getUser(rs2.getLong("userId"),db));
+                                    List<User> sharingUsers = new ArrayList<>();
+                                    while (rs2.next()) {
+                                        sharingUsers.add(getUser(rs2.getLong("userId"), db));
                                     }
                                     currentFolder.setShared(sharingUsers);
                                 }
@@ -382,29 +404,29 @@ public class SystemController {
                 }
                 rs.close();
             }
-            
+
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return folders;
     }
-    
-    private User getUser(Long uid,DBConnector db){
+
+    private User getUser(Long uid, DBConnector db) {
         User user = null;
         String sqlQuery = "select * from users where login=?";
-        try{
+        try {
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setLong(1, uid);
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    user = new User(uid,rs.getString("login"),rs.getString("password"),rs.getString("username"),rs.getString("role"));
+                    user = new User(uid, rs.getString("login"), rs.getString("password"), rs.getString("username"), rs.getString("role"));
                 }
                 rs.close();
             }
-        } catch(Exception ex){
+        } catch (Exception ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
