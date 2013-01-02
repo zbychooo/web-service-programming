@@ -47,3 +47,9 @@ build/web/WEB-INF/classes/com/rest/controller/SystemController.class
 build/web/WEB-INF/classes/com/rest/service/ClientService.class
 build/web/WEB-INF/lib/javax.servlet.jsp.jstl-1.2.1.jar
 build/web/WEB-INF/classes/com/rest/model/UserFiles.class
+build/web/WEB-INF/classes/com/rest/model/UserFile.class
+build/web/WEB-INF/classes/com/rest/model/Folder.class
+build/web/WEB-INF/classes/com/rest/client/SystemClientFilter.class
+build/web/WEB-INF/classes/com/rest/client/SystemClient.class
+build/web/WEB-INF/classes/com/rest/client/SystemClient$2.class
+build/web/WEB-INF/classes/com/rest/client/SystemClient$1.class
