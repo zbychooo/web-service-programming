@@ -71,23 +71,24 @@ public class SystemService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response upload(@FormDataParam("file") InputStream in, 
         @FormDataParam("file") FormDataContentDisposition info, 
-        @FormDataParam("tags") String tags, @FormDataParam("path") String path,
+        @FormDataParam("tag") String tag, @FormDataParam("path") String path,
         @Context SecurityContext sec) {
 
-        path = ""; //TODO: zmienic!!!
         String userlogin = sec.getUserPrincipal().getName();
+        path = userlogin + "//" + path; //TODO: miec na uwadze!!:)
+        
         if(userlogin==null){
             return Response.serverError().build();
         }
-        tags = tags.toUpperCase();            
-        long isUploaded = systemController.uploadFile(in, info.getFileName(), path, userlogin);
+        tag = tag.toUpperCase();            
+        Long fileSize = systemController.uploadFile(in, info.getFileName(), path, userlogin);
         
-        if (isUploaded == -1) {
+        if (fileSize== -1) {
             return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
         }
         
         // zapisanie informacji o pliku w bazie danych
-        Long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags, path);
+        Long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tag, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
 

@@ -89,10 +89,11 @@ public class SystemController {
      * @param userlogin
      * @return
      */
-    public Long uploadFile(InputStream in, String info,
+    public Long uploadFile(InputStream in, String fileName,
             String path, String userlogin) {
 
-        String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
+        String fdir = MAIN_STORAGE_FOLDER + path + "//" + fileName;
+        System.out.println("fdir:" + fdir);
         File file = new File(fdir);
 
         if (file.exists()) {
@@ -199,12 +200,11 @@ public class SystemController {
             DBConnector db = new DBConnector();
 
             String currentDate = this.getCurrentDateStamp();
-            String sqlQuery = "insert into folders(name, dateStamp, shared, directPath) values(?,?,?,?)";
+            String sqlQuery = "insert into folders(name, dateStamp, directPath) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setString(1, folderName);
                 statement.setString(2, currentDate);
-                statement.setLong(3, 0);
-                statement.setString(4, path);
+                statement.setString(3, path);
                 statement.executeUpdate();
                 statement.close();
             }
@@ -256,40 +256,7 @@ public class SystemController {
         }
     }
     
-    
-// metoda wymagap przetesowania i przemyslenia, nie uzywać!
-//    public ArrayList<UserFile> getFilesList(String path) {
-//        
-//        ArrayList<UserFile> files = new ArrayList<>();
-//        try {
-//            
-//            DBConnector db = new DBConnector();
-//            //TODO: tu jest dupa
-//            try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
-//                ResultSet rs = statement.executeQuery();
-//                while (rs.next()) {
-//                    files.add(new UserFile(
-//                            rs.getLong("id"), 
-//                            rs.getString("fileName"), 
-//                            rs.getLong("fileSize"), 
-//                            rs.getString("dateStamp"),
-//                            rs.getString("tagName"),
-//                            rs.getString("directPath"))
-//                            );
-//                }
-//                
-//                rs.close();
-//            }
-//            db.closeConnection();
-//
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return files;
-//    }
-
-    public void deleteFileFromDB(String path, String fileName) {
+     public void deleteFileFromDB(String path, String fileName) {
         //TODO: sprawdzić!!!! 
         String sqlQuery = "";
         Long fileID = Long.valueOf(-1);
