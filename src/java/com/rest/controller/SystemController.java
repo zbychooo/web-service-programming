@@ -193,7 +193,7 @@ public class SystemController {
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
                 statement.setLong(1, userID);
                 statement.setLong(2, fileID);
-                statement.setString(3, "TRUE");
+                statement.setLong(3, 1); //isOwner=1
                 statement.executeUpdate();
                 statement.close();
             }
@@ -261,7 +261,7 @@ public class SystemController {
     public boolean deleteFileFromDB(String path, String fileName, String login) {
 
         String sqlQuery;
-        String isOwner = "FALSE";
+        int isOwner = 0;
         Long fileID = Long.valueOf(-1);
         Long userID;
         
@@ -284,12 +284,12 @@ public class SystemController {
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    isOwner = rs.getString(1);
+                    isOwner = rs.getInt(1);
                 }
             }
             
             System.out.println("isOwner: " + isOwner);
-            if(isOwner.equals("FALSE")) {
+            if(isOwner == 0) {
                 return false;
             }
                        
@@ -318,21 +318,11 @@ public class SystemController {
         return file.delete();
     }
 
-    /**
-     * @deprecated 
-     * @param path
-     * @return 
-     */
     public boolean deleteFolder(String path) {
         path = MAIN_STORAGE_FOLDER + path;
         return this.deleteFolder(new File(path));
     }
 
-    /**
-     * @deprecated 
-     * @param directory
-     * @return 
-     */
     private boolean deleteFolder(File directory) {
 
         File[] files = directory.listFiles();
