@@ -121,16 +121,20 @@ public class SystemController {
         return Long.valueOf(-1);
     }
 
+    private String getCurrentDateStamp(){
+            Date date = new java.util.Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            return dateFormat.format(date);
+    }
+    
     public Long addFileInfoToDB(String fileName, Long fileSize, String tags, String path) {
 
         long id = 0;
         try {
             DBConnector db = new DBConnector();
 
-            Date date = new java.util.Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String currentDate = dateFormat.format(date);
-            String sqlQuery = "insert into files(fileName, fileSize, dateStamp, tagName) values(?,?,?,?)";
+            String currentDate = this.getCurrentDateStamp();
+            String sqlQuery = "insert into files(fileName, fileSize, dateStamp, tagName, directPath) values(?,?,?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setString(1, fileName);
                 statement.setLong(2, fileSize);
@@ -188,6 +192,71 @@ public class SystemController {
         }
     }
 
+    public Long addFolderInfoToDB(String folderName, String path){
+        
+        long id = 0;
+        try {
+            DBConnector db = new DBConnector();
+
+            String currentDate = this.getCurrentDateStamp();
+            String sqlQuery = "insert into folders(name, dateStamp, shared, directPath) values(?,?,?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.setString(1, folderName);
+                statement.setString(2, currentDate);
+                statement.setLong(3, 0);
+                statement.setString(4, path);
+                statement.executeUpdate();
+                statement.close();
+            }
+
+            String sqlQuery2 = "select id from folders where dateStamp='" + currentDate + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    id = rs.getLong(1);
+                }
+            }
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return id;
+    }
+    
+    public void joinFolderAndOwner(Long folderID, String login){
+                long userID = 0;
+        try {
+            DBConnector db = new DBConnector();
+            String sqlQuery = "select id from users where login='" + login + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    userID = rs.getLong(1);
+                }
+            }
+            
+            System.out.println("userid: " + userID + " folderid: " + folderID);
+            String sqlQuery2 = "insert into folders_users(userId, folderId, isOwner) values(?,?,?)";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
+                statement.setLong(1, userID);
+                statement.setLong(2, folderID);
+                statement.setString(3, "TRUE");
+                statement.executeUpdate();
+                statement.close();
+            }
+
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
 // metoda wymagap przetesowania i przemyslenia, nie uzywać!
 //    public ArrayList<UserFile> getFilesList(String path) {
 //        
