@@ -12,15 +12,6 @@
                 <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
             </div>
             <div id="menu">
-                <ul id="accountmenu">
-                    <li >
-                        <a href="#">my account</a>
-                        <ul>
-                            <li><a href="#">Account details</a></li>
-                            <li><a href="#">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
             </div>
         </div>
         <div id="wrapper">
