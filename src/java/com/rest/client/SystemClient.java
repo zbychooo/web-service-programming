@@ -29,10 +29,10 @@ public class SystemClient {
         client = Client.create(config);
         currentUser = user;        
 
-        String URL_DATA = "http://localhost:8080/RESTCloud/rest/systemService/foldername";
-        String URL_DATA1 = "http://localhost:8080/RESTCloud/rest/systemService/folder";
-        String URL_DATA2 = "http://localhost:8080/RESTCloud/rest/systemService/myfolders";
-        String URL_DATA3 = "http://localhost:8080/RESTCloud/rest/systemService/myfolders1";
+//        String URL_DATA = "http://localhost:8080/RESTCloud/rest/systemService/foldername";
+//        String URL_DATA1 = "http://localhost:8080/RESTCloud/rest/systemService/folder";
+//        String URL_DATA2 = "http://localhost:8080/RESTCloud/rest/systemService/myfolders";
+//        String URL_DATA3 = "http://localhost:8080/RESTCloud/rest/systemService/myfolders1";
 
         System.out.println("filter before");
         // add a filter to set cookies received from the server and to check if login has been triggered
