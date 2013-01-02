@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * System Controller class.
  *
@@ -93,10 +92,11 @@ public class SystemController {
      * @param userlogin
      * @return
      */
-    public Long uploadFile(InputStream in, String info,
+    public Long uploadFile(InputStream in, String fileName,
             String path, String userlogin) {
 
-        String fdir = MAIN_STORAGE_FOLDER + userlogin + "\\" + path + "\\" + info;
+        String fdir = MAIN_STORAGE_FOLDER + path + "//" + fileName;
+        System.out.println("fdir:" + fdir);
         File file = new File(fdir);
 
         if (file.exists()) {
@@ -125,10 +125,32 @@ public class SystemController {
         return Long.valueOf(-1);
     }
 
-    private String getCurrentDateStamp(){
-            Date date = new java.util.Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            return dateFormat.format(date);
+    private String getCurrentDateStamp() {
+        Date date = new java.util.Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return dateFormat.format(date);
+    }
+
+    private Long getUserId(String login){
+        
+        long userID = -1;
+        try {
+            DBConnector db = new DBConnector();
+            String sqlQuery = "select id from users where login='" + login + "'";
+
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    userID = rs.getLong(1);
+                }
+            }
+            System.out.println("userid: " + userID);
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return userID;
     }
     
     public Long addFileInfoToDB(String fileName, Long fileSize, String tags, String path) {
@@ -168,18 +190,9 @@ public class SystemController {
 
     public void joinFileAndOwner(long fileID, String login) {
 
-        long userID = 0;
         try {
+            long userID = getUserId(login);
             DBConnector db = new DBConnector();
-            String sqlQuery = "select id from users where login='" + login + "'";
-
-            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                ResultSet rs = statement.executeQuery();
-                while (rs.next()) {
-                    userID = rs.getLong(1);
-                }
-            }
-            System.out.println("userid: " + userID + " fileid: " + fileID);
             String sqlQuery2 = "insert into files_users(userId, fileId, isOwner) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
                 statement.setLong(1, userID);
@@ -196,19 +209,18 @@ public class SystemController {
         }
     }
 
-    public Long addFolderInfoToDB(String folderName, String path){
-        
+    public Long addFolderInfoToDB(String folderName, String path) {
+
         long id = 0;
         try {
             DBConnector db = new DBConnector();
 
             String currentDate = this.getCurrentDateStamp();
-            String sqlQuery = "insert into folders(name, dateStamp, shared, directPath) values(?,?,?,?)";
+            String sqlQuery = "insert into folders(name, dateStamp, directPath) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setString(1, folderName);
                 statement.setString(2, currentDate);
-                statement.setLong(3, 0);
-                statement.setString(4, path);
+                statement.setString(3, path);
                 statement.executeUpdate();
                 statement.close();
             }
@@ -229,21 +241,12 @@ public class SystemController {
 
         return id;
     }
-    
-    public void joinFolderAndOwner(Long folderID, String login){
-                long userID = 0;
-        try {
-            DBConnector db = new DBConnector();
-            String sqlQuery = "select id from users where login='" + login + "'";
 
-            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                ResultSet rs = statement.executeQuery();
-                while (rs.next()) {
-                    userID = rs.getLong(1);
-                }
-            }
-            
-            System.out.println("userid: " + userID + " folderid: " + folderID);
+    public void joinFolderAndOwner(Long folderID, String login) {
+
+        try {
+            long userID = getUserId(login);
+            DBConnector db = new DBConnector();
             String sqlQuery2 = "insert into folders_users(userId, folderId, isOwner) values(?,?,?)";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery2)) {
                 statement.setLong(1, userID);
@@ -252,79 +255,65 @@ public class SystemController {
                 statement.executeUpdate();
                 statement.close();
             }
-
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-// metoda wymagap przetesowania i przemyslenia, nie uzywać!
-//    public ArrayList<UserFile> getFilesList(String path) {
-//        
-//        ArrayList<UserFile> files = new ArrayList<>();
-//        try {
-//            
-//            DBConnector db = new DBConnector();
-//            //TODO: tu jest dupa
-//            try (PreparedStatement statement = db.getConnection().prepareStatement("select * from files where=")) {
-//                ResultSet rs = statement.executeQuery();
-//                while (rs.next()) {
-//                    files.add(new UserFile(
-//                            rs.getLong("id"), 
-//                            rs.getString("fileName"), 
-//                            rs.getLong("fileSize"), 
-//                            rs.getString("dateStamp"),
-//                            rs.getString("tagName"),
-//                            rs.getString("directPath"))
-//                            );
-//                }
-//                
-//                rs.close();
-//            }
-//            db.closeConnection();
-//
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return files;
-//    }
 
-    public void deleteFileFromDB(String path, String fileName) {
-        //TODO: sprawdzić!!!! 
-        String sqlQuery = "";
+    public boolean deleteFileFromDB(String path, String fileName, String login) {
+
+        String sqlQuery;
+        String isOwner = "FALSE";
         Long fileID = Long.valueOf(-1);
+        Long userID;
+        
         try {
             DBConnector db = new DBConnector();
+            System.out.println("check, path:" + path + " filename:" + fileName + " login:" + login);
             sqlQuery = "select id from files where fileName='" + fileName + "' and directPath='" + path + "'";
-
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     fileID = rs.getLong(1);
                 }
             }
-
-            sqlQuery = "delete from files where fileName='" + fileName + "' and directPath='" + path + "'";
-
+            
+            //checks onwership:
+            userID = getUserId(login);
+            System.out.println("userid: " + userID + " fileID: " + fileID);
+            
+            sqlQuery = "select isOwner from files_users where userId='" + userID + "' and fileId='" + fileID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                statement.executeQuery();
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    isOwner = rs.getString(1);
+                }
+            }
+            
+            System.out.println("isOwner: " + isOwner);
+            if(isOwner.equals("FALSE")) {
+                return false;
+            }
+                       
+            //System.out.println("DELETE: fileID " + fileID + "\npath: " + path + "\nfilename: " + fileName);
+            sqlQuery = "delete from files where fileName='" + fileName + "' and directPath='" + path + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeUpdate();
             }
 
             sqlQuery = "delete from files_users where fileId='" + fileID + "'";
-
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                statement.executeQuery();
+                statement.executeUpdate();
             }
 
             db.closeConnection();
-
+            return true;         
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     public boolean deleteFile(String path, String fileName) {
@@ -333,11 +322,21 @@ public class SystemController {
         return file.delete();
     }
 
+    /**
+     * @deprecated 
+     * @param path
+     * @return 
+     */
     public boolean deleteFolder(String path) {
         path = MAIN_STORAGE_FOLDER + path;
         return this.deleteFolder(new File(path));
     }
 
+    /**
+     * @deprecated 
+     * @param directory
+     * @return 
+     */
     private boolean deleteFolder(File directory) {
 
         File[] files = directory.listFiles();
