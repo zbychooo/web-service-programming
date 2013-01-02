@@ -116,7 +116,7 @@ public class SystemService {
     }
     
     @GET
-    @Path("/deleteFile/{folderPath}/{fileName")
+    @Path("/deleteFile/{folderPath}/{fileName}")
     public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName){
         return null;
     }
