@@ -49,14 +49,18 @@ public class SystemService {
     @POST
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response createFolder(@FormParam("foldername") String folderName, @Context SecurityContext sec) {
+    public Response createFolder(@FormParam("folderName") String folderName, @Context SecurityContext sec) {
 
+        String login = sec.getUserPrincipal().getName();
         //dziala, ale trzeba sie zalogowac...
         boolean isCreated = systemController.createFolder(
-                folderName,
-                sec.getUserPrincipal().getName());
-        //Dodaj info do bazy danych
+                folderName, login);
+        
+        String path = login +  "//" + folderName; //TODO: this is hardcoded uri
         if (isCreated) {
+            Long folderId = systemController.addFolderInfoToDB(folderName, path);
+            systemController.joinFolderAndOwner(folderId, login);
+            
             return Response.ok().entity("isCreated: " + isCreated).build();
         }
         return Response.ok().entity("Error: " + ErrorsController.FOLDER_ALREADY_EXISTS).build();
@@ -83,7 +87,6 @@ public class SystemService {
         }
         
         // zapisanie informacji o pliku w bazie danych
-        //TODO PATH as the last parameter
         Long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
