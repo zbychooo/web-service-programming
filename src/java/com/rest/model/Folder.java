@@ -18,19 +18,40 @@ public class Folder {
     private User user;
     @XmlElement
     private String name;
+    @XmlElementWrapper(name="sharedToUsers")
+    @XmlElement(name="user")
+    private List<User> shared;
     @XmlElement
-    private Boolean shared;
+    private String dateStamp;
+    @XmlElement
+    private String directPath;
     
     @XmlElementWrapper(name="files")
     @XmlElement(name="file")
     private List<UserFile> files;
 
     public Folder(){
+        this.shared = new ArrayList<>();
         this.files = new ArrayList<>();
-    }    
+    }
+
+    public Folder(Long id, User user, String name, String dateStamp, String directPath) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.dateStamp = dateStamp;
+    }
+
+    public Folder(Long id, User user, String name) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.shared = new ArrayList<>();
+        this.files = new ArrayList<>();
+    }
     
     public Folder(Long id, User user,
-            String name, Boolean shared){
+            String name, List<User> shared){
         this.id = id;
         this.user = user;
         this.name = name;
@@ -38,7 +59,7 @@ public class Folder {
         this.files = new ArrayList<>();
     }
 
-    public Folder(Long id, User user, String name, Boolean shared, List<UserFile> files) {
+    public Folder(Long id, User user, String name, List<User> shared, List<UserFile> files) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -62,11 +83,11 @@ public class Folder {
         this.name = name;
     }
 
-    public Boolean getShared() {
+    public List<User> getShared() {
         return shared;
     }
 
-    public void setShared(Boolean shared) {
+    public void setShared(List<User> shared) {
         this.shared = shared;
     }
 
