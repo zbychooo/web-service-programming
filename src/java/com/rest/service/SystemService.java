@@ -55,7 +55,7 @@ public class SystemService {
         boolean isCreated = systemController.createFolder(
                 folderName,
                 sec.getUserPrincipal().getName());
-
+        //Dodaj info do bazy danych
         if (isCreated) {
             return Response.ok().entity("isCreated: " + isCreated).build();
         }
@@ -84,7 +84,7 @@ public class SystemService {
         
         // zapisanie informacji o pliku w bazie danych
         //TODO PATH as the last parameter
-        Long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags,"");
+        Long fileId = systemController.addFileInfoToDB(info.getFileName(), info.getSize(), tags, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndOwner(fileId, userlogin);
 
@@ -92,26 +92,33 @@ public class SystemService {
     }
 
     @GET
-    @Path("/get/{resource}")
-    public Response getUserFileList(@PathParam("resource") String resource){
-        //get files by tag or get users files
+    @Path("/shareFile/{filePath}/{fileName}")
+    public Response shareFile(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName){
         return null;
     }
-        
     
     @GET
-    @Path("/getAvailableStorageSize")
-    @Produces("text/plain")
-    public Response getAvailableStorageSize(@Context SecurityContext sec) {
-        
-        long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
-        long availableSpace = SystemController.MAX_STORAGE - folderSize;
-        
-        String outMessage = "Main folder size: " + folderSize + "kb \n" +
-                "Max: " + SystemController.MAX_STORAGE + "kb \n" +
-                "Available: " + availableSpace + "kb.";
-        
-        return Response.ok().entity(outMessage).build();
+    @Path("/unshareFile/{filePath}/{fileName}")
+     public Response unshareFile(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName){
+        return null;
+    }   
+    
+    @POST
+    @Path("tagFile")
+    public Response tagFile(@FormParam("tagName") String tagName) {
+        return null;
+    }
+    
+    @GET
+    @Path("/deleteFolder/{folderPath}")
+    public Response deleteFolder(@PathParam("folderPath") String path){
+        return null;
+    }
+    
+    @GET
+    @Path("/deleteFile/{folderPath}/{fileName}")
+    public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName){
+        return null;
     }
     
     @GET
