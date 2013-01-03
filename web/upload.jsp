@@ -12,8 +12,8 @@
             file: <input type="file" name="file" /><br />
             tag: <input type="text" name="tag" size="50" value="" /><br />
             dest. path: <select name="path">
-                <option>1</option>
-                <option>2</option>
+                <option>baluty</option>
+                <option>widzew</option>
             </select><br />
             <input type="submit" value="upload" />
         </form>
@@ -27,8 +27,8 @@
         
         <hr /><h1>Menu:</h1>
         <ul>
-            <li><a href="rest/systemService/deleteFile/1/zaal.txt">delete zaal.txt</a></li>
-            <li>link here</li>
+            <li><a href="rest/systemService/deleteFile/widzew/zaal.txt">delete zaal.txt</a></li>
+            <li><a href="rest/systemService/deleteFolder/baluty">delete folder baluty</a></li>
         </ul>
     </body>
 </html>
