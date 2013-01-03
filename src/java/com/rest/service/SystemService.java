@@ -59,7 +59,7 @@ public class SystemService {
         String path = login +  "//" + folderName;
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
-            systemController.joinFolderAndOwner(folderId, login);
+            systemController.joinFolderAndUser(folderId, login, 1);
             
             return Response.ok().entity("isCreated: " + isCreated).build();
         }
@@ -95,9 +95,13 @@ public class SystemService {
         return Response.ok().entity("File is up.").build();
     }
 
-    @GET
-    @Path("/shareFolder/{filePath}")
-    public Response shareFile(@PathParam("filePath") String filePath){
+    @POST
+    @Path("/shareFolder")
+    public Response shareFile(@FormParam("filePath") String filePath, @FormParam("shareLogin") String shareLogin, @Context SecurityContext sec) {
+        //check if is owner
+        //join user and folder
+        //systemController.joinFolderAndUser(Long.MIN_VALUE, filePath, 0);
+        
         return null;
     }
     
@@ -107,11 +111,6 @@ public class SystemService {
         return null;
     }   
     
-    @POST
-    @Path("tagFile")
-    public Response tagFile(@FormParam("tagName") String tagName) {
-        return null;
-    }
     
     @GET
     @Path("/deleteFolder/{folderPath}")

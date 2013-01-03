@@ -251,7 +251,7 @@ public class SystemController {
         return id;
     }
 
-    public void joinFolderAndOwner(Long folderID, String login) {
+    public void joinFolderAndUser(Long folderID, String login, int isOwner) {
 
         try {
             long userID = getUserId(login);
@@ -260,7 +260,7 @@ public class SystemController {
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setLong(1, userID);
                 statement.setLong(2, folderID);
-                statement.setLong(3, 1);
+                statement.setLong(3, isOwner);
                 statement.executeUpdate();
                 statement.close();
             }

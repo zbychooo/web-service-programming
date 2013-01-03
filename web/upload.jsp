@@ -15,7 +15,7 @@
                 <option>baluty</option>
                 <option>widzew</option>
             </select><br />
-            <input type="submit" value="upload" />
+            <input type="submit" value="create" />
         </form>
         
         <hr /><h1>CreateFolder:</h1>
