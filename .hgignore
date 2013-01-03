@@ -54,3 +54,4 @@ build/web/WEB-INF/classes/com/rest/client/SystemClient.class
 build/web/WEB-INF/classes/com/rest/client/SystemClient$2.class
 build/web/WEB-INF/classes/com/rest/client/SystemClient$1.class
 build/web/myfolders.jsp
+build/web/WEB-INF/lib/jstl-1.2.jar
