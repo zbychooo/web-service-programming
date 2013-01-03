@@ -91,7 +91,7 @@
                                         </c:forEach>
                                     </td>
                                     <td>
-                                        <input type="checkbox" id="share" checked="${folders.get(currentFolderIndex).shared}" disabled="true" /> 
+                                        <input type="checkbox" id="share" checked="${folders.get(currentFolderIndex).shared.isEmpty()!=true}" disabled="true" /> 
                                     </td>
                                     <td>
                                         <input type="button" id="tagfile" value="Tag" /> 
@@ -121,7 +121,7 @@
                                 <li>
                                     <!-- click on "my folders" and the user should be redirected to the list of folders, where they can 
                                     add/delete/share/view them -->
-                                    <h3><a href="#" >My folders </a></h3>
+                                    <h3><a href="rest/myfolders/all" >My folders </a></h3>
                                     <c:set var="counter" value="${0}" />
                                     <c:forEach items="${folders}" var="folder">
                                         <ul>
@@ -133,7 +133,7 @@
 				<li>
                                     <!-- click on "Shared folders" and the user should be redirected to the list of shared folders, 
                                     where they can share/hide/view them -->
-                                    <h3><a href="#">Shared folders</a></h3>
+                                    <h3><a href="rest/myfolders/shared">Shared folders</a></h3>
                                     <c:set var="counter" value="${0}" /> 
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.shared.isEmpty()!=true}" >
@@ -144,7 +144,6 @@
                                         <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
                                 </li>
-				<li><a href="#">Watch porn</a></li>
                             </ul>
 			</li>
 			<li id="search">
