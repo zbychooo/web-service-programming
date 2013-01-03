@@ -28,7 +28,7 @@
         <hr /><h1>Menu:</h1>
         <ul>
             <li><a href="rest/systemService/deleteFile/widzew/zaal.txt">delete zaal.txt</a></li>
-            <li><a href="rest/systemService/deleteFolder/2">delete folder 2</a></li>
+            <li><a href="rest/systemService/deleteFolder/baluty">delete folder baluty</a></li>
         </ul>
     </body>
 </html>
