@@ -6,11 +6,11 @@ public class DBConnectorTester {
         System.out.println("Tester,");
         
                
-        //DBConnector db = new DBConnector();
-        //System.out.println("CHECK DATABASE: " + db.isConnection());
+        DBConnector db = new DBConnector();
+        System.out.println("CHECK DATABASE: " + db.isConnection());
 
-        String s = "userpass";
-        String sOut = Hash.md5(s);
-        System.out.println("out: " + sOut);
+//        String s = "userpass";
+//        String sOut = Hash.md5(s);
+//        System.out.println("out: " + sOut);
     }
 }
