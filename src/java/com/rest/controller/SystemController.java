@@ -511,6 +511,25 @@ public class SystemController {
         return false;
     }
 
+    public void disjoinFolderAndNoOwnerUsers(Long folderId, String login){
+        
+        try {
+            //long userID = getUserId(login);
+            DBConnector db = new DBConnector();
+            String sqlQuery = "delete from users_folders where folderId='" + folderId + "' and isOwner='0'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeUpdate();
+                statement.close();
+            }
+            
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
     public List<Folder> getUserFolders(User user) {
         List<Folder> folders = new ArrayList<>();
         try {
