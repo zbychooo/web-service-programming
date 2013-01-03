@@ -18,7 +18,7 @@
                         <a href="#">${user.username}</a>
                         <ul>
                             <li><a href="#">Account details</a></li>
-                            <li><a href="#">Logout</a></li>
+                            <li><a href="rest/userService/logout">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
