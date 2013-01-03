@@ -2,6 +2,7 @@ package com.rest.controller;
 
 import com.rest.model.Folder;
 import com.rest.model.User;
+import com.rest.model.UserFile;
 import com.utilities.DBConnector;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -532,69 +533,108 @@ public class SystemController {
     
     public List<Folder> getUserFolders(User user) {
         List<Folder> folders = new ArrayList<>();
+        DBConnector db = null;
         try {
-            DBConnector db = new DBConnector();
-//            
-            //get from folders_sers the connections
-            //store them all
-            //get the folder objects from those 
-            String query = "select * from users_folders where userId=?";
+            db = new DBConnector();
+            String query = "SELECT * FROM users_folders AS uf, folders AS f WHERE uf.userId=? AND f.id=uf.folderId AND uf.isOwner='1'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(query)) {
                 statement.setLong(1, user.getUid());
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    long fid = rs.getLong("folderId");
-                    Boolean owner = rs.getBoolean("isOwner");
-                    if (owner) {
-                        try (PreparedStatement statement1 = db.getConnection().prepareStatement("select * from folders where id=?")) {
-                            statement1.setLong(1, fid);
-                            ResultSet rs1 = statement1.executeQuery();
-                            while (rs1.next()) {
-                                Folder currentFolder = new Folder(rs1.getLong("id"), user, rs1.getString("name"),
-                                        rs1.getString("dateStamp"), rs1.getString("directPath"));
-                                //get users that can read this folder
-                                try (PreparedStatement statement2 = db.getConnection().prepareStatement("select * from users_folders where folderId=?")) {
-                                    statement2.setLong(1, fid);
-                                    ResultSet rs2 = statement2.executeQuery();
-                                    List<User> sharingUsers = new ArrayList<>();
-                                    while (rs2.next()) {
-                                        sharingUsers.add(getUser(rs2.getLong("userId"), db));
-                                    }
-                                    currentFolder.setShared(sharingUsers);
-                                }
-                                //finally add to the list
-                                folders.add(currentFolder);
-                            }
-                        }
-                    }
+                    folders.add(new Folder(rs.getLong("id"), user, rs.getString("name"),
+                            rs.getString("dateStamp"), rs.getString("directPath")));
                 }
                 rs.close();
+                statement.close();
             }
-
-            db.closeConnection();
-
+            for(Folder currentFolder : folders){
+                try (PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM users_folders AS uf,users AS u where uf.folderId=? and u.id=uf.userId and uf.isOwner='0'")) {
+                    statement.setLong(1, currentFolder.getId());
+                    ResultSet rs = statement.executeQuery();
+                    List<User> users = new ArrayList<>();
+                    while(rs.next()){
+                        users.add(new User(rs.getLong("id"),rs.getString("login"),rs.getString("password"),
+                                rs.getString("username"),rs.getString("role")));
+                    }
+                    currentFolder.getShared().addAll(users);
+                }
+                try (PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM folders_files AS ff,files AS f where ff.folderId=? and f.id=ff.fileId")) {
+                    statement.setLong(1, currentFolder.getId());
+                    ResultSet rs = statement.executeQuery();
+                    List<UserFile> files = new ArrayList<>();
+                    while(rs.next()){
+                        files.add(new UserFile(rs.getLong("id"),rs.getString("fileName"),rs.getLong("fileSize"),
+                                rs.getString("dateStamp"),rs.getString("tagName"),rs.getString("directPath")));
+                    }
+                    currentFolder.getFiles().addAll(files);
+                }
+            }
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {     
+            if(db != null){
+                try{
+                    db.closeConnection();
+                } catch(SQLException ex){
+                    Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
 
         return folders;
     }
+    
+    public List<UserFile> getFolderFiles(Long folderId, DBConnector db){
+        List<UserFile> result = new ArrayList<>();
+        
+        try{
+            List<Long> ids = new ArrayList<>();
+            String query = "select * from folders_files where folderId=?";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(query)) {
+                statement.setLong(1, folderId);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    ids.add(rs.getLong("fileId"));
+                }
+                rs.close();
+                statement.close();
+            }
+            String query1 = "select * from files where id=?";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(query1)) {
+                statement.setLong(1, folderId);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    result.add(new UserFile(rs.getLong("id"),rs.getString("fileName"),rs.getLong("fileSize"),
+                            rs.getString("dateStamp"),rs.getString("tagName"),rs.getString("directPath")));
+                }
+                rs.close();
+                statement.close();
+            }
+        }catch(Exception ex){
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
+    }
 
-    private User getUser(Long uid, DBConnector db) {
-        User user = null;
+    public User getUser(String login, DBConnector db) {
+        if(db == null){
+            db = new DBConnector();
+        }
+        User user=new User();
         String sqlQuery = "select * from users where login=?";
         try {
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                statement.setLong(1, uid);
+                statement.setString(1, login);
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    user = new User(uid, rs.getString("login"), rs.getString("password"), rs.getString("username"), rs.getString("role"));
+                    user = new User(rs.getLong("id"), login, rs.getString("password"), rs.getString("username"), rs.getString("role"));
                 }
                 rs.close();
             }
         } catch (Exception ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return user;
     }
 }

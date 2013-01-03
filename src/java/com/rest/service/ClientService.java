@@ -33,27 +33,18 @@ public class ClientService {
     @Path("/home/{cfi}")
     @Produces("text/html")
     public Response index1(@PathParam("cfi") String currentFolderIndex, @Context HttpServletRequest request, @Context SecurityContext sec) {
-        //initialize model
-        Map<String, Object> map = new HashMap<String, Object>();
         //add stuff necessary for the page to display correctly
         SystemService ss = new SystemService();
-//        if(sec.getUserPrincipal() == null){
-//            return Response.ok(new Viewable("/login")).build();
-//        }
         Response temp = ss.getRemainingStorageSize(sec);
-        System.out.println("actually inside the method "+(String)temp.getEntity());
-        map.put("remainingSpace", (String)temp.getEntity());
         try{
             UsersController uc = new UsersController();
             User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
-            request.getSession().setAttribute("user", currentUser);
+//            request.getSession().setAttribute("user", currentUser);
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             System.out.println("request is working :| ");
             systemClient = new SystemClient(currentUser);
-            List<Folder> folders = systemClient.getFolderList();
-            if(folders == null){
-                folders = new ArrayList<>();
-            }
+            List<Folder> folders = new ArrayList<>();
+            folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
             System.out.println("before cfi casting");
             request.getSession().setAttribute("currentFolderIndex", Long.valueOf(currentFolderIndex));

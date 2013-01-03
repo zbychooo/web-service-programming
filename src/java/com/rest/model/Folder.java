@@ -40,29 +40,17 @@ public class Folder {
         this.user = user;
         this.name = name;
         this.dateStamp = dateStamp;
-    }
-
-    public Folder(Long id, User user, String name) {
-        this.id = id;
-        this.user = user;
-        this.name = name;
+        this.directPath = directPath;
         this.shared = new ArrayList<>();
         this.files = new ArrayList<>();
     }
     
-    public Folder(Long id, User user,
-            String name, List<User> shared){
+    public Folder(Long id, User user, String name, String dateStamp, String directPath, List<User> shared, List<UserFile> files) {
         this.id = id;
         this.user = user;
         this.name = name;
-        this.shared = shared;
-        this.files = new ArrayList<>();
-    }
-
-    public Folder(Long id, User user, String name, List<User> shared, List<UserFile> files) {
-        this.id = id;
-        this.user = user;
-        this.name = name;
+        this.dateStamp = dateStamp;
+        this.directPath = directPath;
         this.shared = shared;
         this.files = files;
     }

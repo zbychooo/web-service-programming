@@ -71,7 +71,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                           <c:forEach items="${folders.get(currentFolderIndex).files}" var="file">
+                            <c:if test="${folders.get(currentFolderIndex).files.isEmpty()==false}" >
+                            <c:forEach items="${folders.get(currentFolderIndex).files}" var="file">
                                 <tr>
                                     <td>
                                         <input type="checkbox" id="select" /> 
@@ -104,6 +105,14 @@
                                     </td>
                                 </tr>
                             </c:forEach>
+                            </c:if>
+                            <c:if test="${folders.get(currentFolderIndex).files.isEmpty()==true}">
+                                <tr>
+                                    <td colspan="5">
+                                        There are no files in this folder.
+                                    </td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                     <br/>        

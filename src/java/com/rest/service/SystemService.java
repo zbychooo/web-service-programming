@@ -200,42 +200,16 @@ public class SystemService {
     @GET
     @Path("/myfolders")
     @Produces(MediaType.APPLICATION_XML) 
-//    public Response getCurrentUserFolders(@Context SecurityContext sec){
     public List<Folder> getCurrentUserFolders(@Context SecurityContext sec){
         List<Folder> folders = new ArrayList<>(); 
-        
-        List<UserFile> files2 = new ArrayList<>();
-//        List<String> tags2 = new ArrayList<>();
-//        tags2.add("TV-Series");
-//        tags2.add("Favorites");
-        Date date = new java.util.Date();
-        
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String currentDate = dateFormat.format(date);
-        
-        files2.add(new UserFile(Long.valueOf(1), "S01E01.avi", Long.valueOf(351310000),currentDate,"TV-Series",""));        
-        files2.add(new UserFile(Long.valueOf(2), "S01E02.avi", Long.valueOf(350610000),currentDate,"TV-Series",""));        
-        files2.add(new UserFile(Long.valueOf(3), "S01E03.avi", Long.valueOf(351610070),currentDate,"TV-Series",""));
-        folders.add(new Folder(Long.valueOf(177),
-                new User(Long.valueOf(10),"seba1","","Seba","user"),"The Vampire Diaries",new ArrayList<User>(),files2));
-        
-        List<UserFile> files1 = new ArrayList<>();
-        files1.add(new UserFile(Long.valueOf(1), "01 3 Hours.mp3",Long.valueOf(7310000),currentDate,"Music",""));
-        
-        files1.add(new UserFile(Long.valueOf(2), "01 Common exchange.mp3",Long.valueOf(6610000),currentDate,"Music",""));
-        folders.add(new Folder(Long.valueOf(173),
-                new User(Long.valueOf(9),"seba","seba","Seba","user"),"folderek",new ArrayList<User>(),files1));
-        
-        folders.add(new Folder(Long.valueOf(174),new User(),"kolejny glupi rok",new ArrayList<User>()));
-        
-        folders.addAll(systemController.getUserFolders(new User(Long.valueOf(10),"grimm","grimm","Grimm","user")));
-        
-//        ListResponse listResponse = new ListResponse(folders);
-//        GenericEntity entity = new GenericEntity<List<Folder>>(folders) {};
+        System.out.println("SEC: "+sec.getUserPrincipal().getName());
+        User user = systemController.getUser(sec.getUserPrincipal().getName(), null);
+        folders.addAll(systemController.getUserFolders(user));
+        for(Folder f : folders){
+            System.out.println("FOlders: "+f.getFiles().size()+" - "+f.getShared().size());
+        }
         System.out.println("MY FOLDERS "+folders.size());
         return folders;
-//        return Response.ok(folders, MediaType.APPLICATION_XML).build();
-//        return Response.ok(folders.get(0), MediaType.APPLICATION_XML).build();
     }
     
 }
