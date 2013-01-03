@@ -44,6 +44,10 @@
             <input type="submit" value="UNshare" />
         </form>
         
-        <hr />
+        <hr /><h1>Search:</h1>
+        <form action="rest/systemService/search" method="POST">
+            search: <input type="text" name="searchPhrase" size="50" value="" />
+            <input type="submit" value="search" />
+        </form>
     </body>
 </html>
