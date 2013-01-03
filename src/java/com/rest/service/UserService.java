@@ -1,16 +1,17 @@
 package com.rest.service;
 
 import com.rest.controller.UsersController;
+import com.sun.jersey.api.JResponse;
 import com.sun.jersey.spi.resource.Singleton;
+import java.net.URI;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 
 /**
  * User Service class.
@@ -57,4 +58,16 @@ public class UserService {
         return Response.ok().entity(sec.getUserPrincipal().getName()).build();
     }
     
+    @GET
+    @Path("/logout")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String logout(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context SecurityContext sec){        
+        try{
+            request.logout();         
+            response.sendRedirect("../../");
+            return "";
+        } catch(Exception e){
+            return "";
+        }
+    }
 }
