@@ -330,7 +330,7 @@ public class SystemController {
                 statement.close();
             }
             db.closeConnection();
-            
+
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
@@ -342,6 +342,87 @@ public class SystemController {
         //System.out.println(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
         File file = new File(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
         return file.delete();
+    }
+
+    public boolean deleteFolderFromDB(String path, String login) {
+
+        String sqlQuery;
+        long userID = getUserId(login);
+        long folderID = 0;
+        int isOwner = 0;
+
+        try {
+
+            DBConnector db = new DBConnector();
+            sqlQuery = "select id from folders where directPath='" + path + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    folderID = rs.getLong(1);
+                }
+                statement.close();
+            }
+            System.out.println("AFTER: id folderu");
+
+
+            sqlQuery = "select isOwner from users_folders where userId='" + userID + "' and folderId='" + folderID + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    isOwner = rs.getInt(1);
+                }
+                statement.close();
+            }
+            System.out.println("AFTER, is owner sql");
+
+            if (isOwner == 0) {
+                return false;
+            }
+            System.out.println("AFTER if user is owner = true");
+
+            sqlQuery = "select fileId from folders_files where folderId='" + folderID + "'";
+            ArrayList<Long> fileIDs = new ArrayList<>();
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    fileIDs.add(rs.getLong(1));
+                }
+                statement.close();
+            }
+            System.out.println("AFTER select ids plikow w danym folderze");
+            
+            for (int i = 0; i < fileIDs.size(); i++) {
+                sqlQuery = "delete from files where id='" + fileIDs.get(i) + "'";
+                try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                    statement.executeUpdate();
+                    statement.close();
+                }
+            }
+            System.out.println("AFTER usuniecie wpisow o plikach z danego folderu");
+            
+            sqlQuery = "delete from folders_files where folderId='" + folderID + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeUpdate();
+                statement.close();
+            }
+            System.out.println("AFTER usunieciu folderu z folders_files");
+
+            
+            sqlQuery = "delete from folders where folderId='" + folderID + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeUpdate();
+                statement.close();
+            }
+            System.out.println("AFTER usuniecie folderu z tabeli folders");
+
+            db.closeConnection();
+            return true;
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
     }
 
     public boolean deleteFolder(String path) {
