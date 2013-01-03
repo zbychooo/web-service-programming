@@ -82,6 +82,7 @@ public class ClientService {
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             systemClient = new SystemClient(currentUser);
             List<Folder> folders = new ArrayList<>();
+            
             for(Folder f : systemClient.getFolderList()){
                 if(mode.equals("all")){
                     folders.add(f);

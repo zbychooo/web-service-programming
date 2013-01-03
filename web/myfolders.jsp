@@ -65,7 +65,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                           <c:forEach items="${folders}" var="folder">
+                            <c:if test="${folders.isEmpty()==false}" >
+                            <c:forEach items="${folders}" var="folder">
                                 <tr>
                                     <td>
                                         <input type="checkbox" id="select" /> 
@@ -84,6 +85,14 @@
                                     </td>
                                 </tr>
                             </c:forEach>
+                            </c:if>
+                            <c:if test="${folders.isEmpty()==true}">
+                                <tr>
+                                    <td colspan="5">
+                                        There are no folders in your account.
+                                    </td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                     <br/>        
