@@ -111,6 +111,22 @@ public class Folder {
     public void setFiles(List<UserFile> files) {
         this.files = files;
     }
+
+    public String getDateStamp() {
+        return dateStamp;
+    }
+
+    public void setDateStamp(String dateStamp) {
+        this.dateStamp = dateStamp;
+    }
+
+    public String getDirectPath() {
+        return directPath;
+    }
+
+    public void setDirectPath(String directPath) {
+        this.directPath = directPath;
+    }
     
     
 }
