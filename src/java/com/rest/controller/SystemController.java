@@ -347,6 +347,7 @@ public class SystemController {
     public boolean deleteFolderFromDB(String path, String login) {
 
         String sqlQuery;
+        //pobierz id user'a
         long userID = getUserId(login);
         long folderID = 0;
         int isOwner = 0;
@@ -354,6 +355,8 @@ public class SystemController {
         try {
 
             DBConnector db = new DBConnector();
+            
+            //pobierz id usuwanego folderu
             sqlQuery = "select id from folders where directPath='" + path + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
@@ -362,9 +365,9 @@ public class SystemController {
                 }
                 statement.close();
             }
-            System.out.println("AFTER: id folderu");
+            System.out.println("[INFO] select folder's id: " + folderID);
 
-
+            //sprawdź czy user, który usuwa folder jest jego właścicielem
             sqlQuery = "select isOwner from users_folders where userId='" + userID + "' and folderId='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
@@ -373,13 +376,15 @@ public class SystemController {
                 }
                 statement.close();
             }
-            System.out.println("AFTER, is owner sql");
+            System.out.println("[INFO] checks if user id owner-> " + isOwner);
 
+            //jeżeli user nie jest właścicielem, nie pozwól na usunięcie.
             if (isOwner == 0) {
                 return false;
             }
-            System.out.println("AFTER if user is owner = true");
+            System.out.println("[INFO] visible if user is the owner");
 
+            //pobierz id plikow które są w danych folderze, zapisz w ArrayList
             sqlQuery = "select fileId from folders_files where folderId='" + folderID + "'";
             ArrayList<Long> fileIDs = new ArrayList<>();
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
@@ -389,8 +394,9 @@ public class SystemController {
                 }
                 statement.close();
             }
-            System.out.println("AFTER select ids plikow w danym folderze");
+            System.out.println("[INFO] selected file's ids stored in given folder");
             
+            //usuń te pliki z tabeli files
             for (int i = 0; i < fileIDs.size(); i++) {
                 sqlQuery = "delete from files where id='" + fileIDs.get(i) + "'";
                 try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
@@ -398,23 +404,33 @@ public class SystemController {
                     statement.close();
                 }
             }
-            System.out.println("AFTER usuniecie wpisow o plikach z danego folderu");
+            System.out.println("[INFO] deleted files stored in given folder");
+      
+            //usuń powiązanie danego folderu z userem
+            sqlQuery = "delete from users_folders where folderId='" + folderID + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.executeUpdate();
+                statement.close();
+            }
+            System.out.println("[INFO] deleted record from users_folders table");
             
+            //usuń powiązanie folderu z danymi plikami(które i tak usunęliśmy)
             sqlQuery = "delete from folders_files where folderId='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.executeUpdate();
                 statement.close();
             }
-            System.out.println("AFTER usunieciu folderu z folders_files");
+            System.out.println("[INFO] deleted record from folders_files table");
 
-            
-            sqlQuery = "delete from folders where folderId='" + folderID + "'";
+            //usuń wpis o danym folderze z tabeli folderów
+            sqlQuery = "delete from folders where id='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.executeUpdate();
                 statement.close();
             }
-            System.out.println("AFTER usuniecie folderu z tabeli folders");
+            System.out.println("[INFO] deleted record from folders table");
 
+            //zamknij połaczenie i narta.
             db.closeConnection();
             return true;
 
