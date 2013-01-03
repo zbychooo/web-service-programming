@@ -515,21 +515,45 @@ public class SystemController {
     public void disjoinFolderAndNoOwnerUsers(Long folderId, String login){
         
         try {
-            //long userID = getUserId(login);
             DBConnector db = new DBConnector();
             String sqlQuery = "delete from users_folders where folderId='" + folderId + "' and isOwner='0'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.executeUpdate();
                 statement.close();
-            }
-            
+            }            
             db.closeConnection();
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
+    
+    public ArrayList<UserFile> search(String phrase){
+         
+        ArrayList<UserFile> results = new ArrayList<>();
+        try {
+            DBConnector db = new DBConnector();
+            String sqlQuery = "SELECT * FROM files WHERE tagName LIKE '%" + phrase + "%' OR fileName LIKE '%" + phrase + "%'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    results.add(new UserFile(rs.getLong("id"), 
+                            rs.getString("fileName"), rs.getLong("fileSize"), 
+                            rs.getString("dateStamp"), rs.getString("tagName"), 
+                            rs.getString("directPath"))
+                            );
+                }
+                statement.close();
+            }            
+            db.closeConnection();
+            
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+    
+    
     
     public List<Folder> getUserFolders(User user) {
         List<Folder> folders = new ArrayList<>();

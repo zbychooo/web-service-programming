@@ -53,3 +53,4 @@ build/web/WEB-INF/classes/com/rest/client/SystemClientFilter.class
 build/web/WEB-INF/classes/com/rest/client/SystemClient.class
 build/web/WEB-INF/classes/com/rest/client/SystemClient$2.class
 build/web/WEB-INF/classes/com/rest/client/SystemClient$1.class
+build/web/myfolders.jsp

@@ -76,6 +76,7 @@ public class SystemService {
 
         String userlogin = sec.getUserPrincipal().getName();
         path = userlogin + "//" + path; 
+        //TODO: sprawdzic czy nie folder usera nie przekracza max. pojemności!!!1
         
         if(userlogin==null){
             return Response.serverError().build();
@@ -140,6 +141,14 @@ public class SystemService {
         return Response.ok().entity("ok, folder UNshared").build();
     }   
     
+    @POST
+    @Path("/search")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response search(@FormParam("searchPhrase") String phrase){
+        
+        ArrayList<UserFile> results = systemController.search(phrase);
+        return Response.ok().entity("Results: \n" + results.toString()).build();
+    } 
     
     @GET
     @Path("/deleteFolder/{folderPath}")
