@@ -108,8 +108,7 @@ public class SystemService {
         
         long folderId = systemController.getFolderId(filePath);
         if(folderId!=0){
-            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());
-            
+            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());  
             if(isOwner){
                 systemController.joinFolderAndUser(folderId, shareLogin, 0);
             }
@@ -122,10 +121,23 @@ public class SystemService {
         return Response.ok().entity("ok, folder shared").build();
     }
     
-    @GET
-    @Path("/unshareFolder/{filePath}")
-     public Response unshareFile(@PathParam("filePath") String filePath){
-        return null;
+    @POST
+    @Path("/unshareFolder")
+     public Response unshareFile(@FormParam("filePath") String filePath, @Context SecurityContext sec){
+        
+        long folderId = systemController.getFolderId(filePath);
+        if(folderId!=0){
+            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());    
+            if(isOwner){
+                systemController.disjoinFolderAndNoOwnerUsers(folderId, sec.getUserPrincipal().getName());
+            }
+            else {
+                return Response.ok().entity("user is not owner of this file").build();
+            }
+        } else {
+            return Response.ok().entity("cannot get folder id").build();
+        }    
+        return Response.ok().entity("ok, folder UNshared").build();
     }   
     
     

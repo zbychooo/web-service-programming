@@ -7,7 +7,6 @@
     </head>
     <body>
         <h1>Upload:</h1>
-
         <form action="rest/systemService/uploadFile" method="POST" enctype="multipart/form-data">
             file: <input type="file" name="file" /><br />
             tag: <input type="text" name="tag" size="50" value="" /><br />
@@ -20,7 +19,6 @@
         </form>
         
         <hr /><h1>CreateFolder:</h1>
-
         <form action="rest/systemService/createFolder" method="POST">
             folder name: <input type="text" name="folderName" size="50" value="" /><br />
             <input type="submit" value="create" />
@@ -34,11 +32,18 @@
         
         
         <hr /><h1>ShareFolder:</h1>
-
         <form action="rest/systemService/shareFolder" method="POST">
             file path [format: {folderGłówny}//{nazwaPodfolderu}]: <input type="text" name="filePath" size="50" value="" /><br />
             share login: <input type="text" name="shareLogin" size="50" value="" /><br />
             <input type="submit" value="share" />
         </form>
+        
+        <h1><u>UN</u>ShareFolder:</h1>
+        <form action="rest/systemService/unshareFolder" method="POST">
+            file path [format: {folderGłówny}//{nazwaPodfolderu}]: <input type="text" name="filePath" size="50" value="" /><br />
+            <input type="submit" value="UNshare" />
+        </form>
+        
+        <hr />
     </body>
 </html>
