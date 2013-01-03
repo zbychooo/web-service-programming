@@ -117,9 +117,19 @@ public class SystemService {
     @Path("/deleteFolder/{folderPath}")
     public Response deleteFolder(@PathParam("folderPath") String path, @Context SecurityContext sec){
         path = sec.getUserPrincipal().getName() + "//" + path;
-        boolean isDeleted = systemController.deleteFolder(path);
-        //TODO: usuwanie z bazy
-        return Response.ok().entity("ok: " + isDeleted).build();
+        
+        
+        boolean isDeleted = systemController.deleteFolderFromDB(path, sec.getUserPrincipal().getName());
+        if(!isDeleted){
+            return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+        }
+        isDeleted = systemController.deleteFolder(path);
+        
+        if(!isDeleted){
+            return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
+        }
+        
+        return Response.ok().entity("ok").build();
     }
     
     @GET
