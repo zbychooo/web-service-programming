@@ -95,14 +95,31 @@ public class SystemService {
         return Response.ok().entity("File is up.").build();
     }
 
+    /**
+     * 
+     * @param filePath wysyłamy wg formatu {folderGłówny}//{nazwaPodfolderu}
+     * @param shareLogin
+     * @param sec
+     * @return 
+     */
     @POST
     @Path("/shareFolder")
     public Response shareFile(@FormParam("filePath") String filePath, @FormParam("shareLogin") String shareLogin, @Context SecurityContext sec) {
-        //check if is owner
-        //join user and folder
-        //systemController.joinFolderAndUser(Long.MIN_VALUE, filePath, 0);
         
-        return null;
+        long folderId = systemController.getFolderId(filePath);
+        if(folderId!=0){
+            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());
+            
+            if(isOwner){
+                systemController.joinFolderAndUser(folderId, shareLogin, 0);
+            }
+            else {
+                return Response.ok().entity("user is not owner of this file").build();
+            }
+        } else {
+            return Response.ok().entity("cannot get folder id").build();
+        }    
+        return Response.ok().entity("ok, folder shared").build();
     }
     
     @GET
