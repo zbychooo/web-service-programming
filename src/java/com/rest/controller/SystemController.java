@@ -355,7 +355,7 @@ public class SystemController {
         try {
 
             DBConnector db = new DBConnector();
-            
+
             //pobierz id usuwanego folderu
             sqlQuery = "select id from folders where directPath='" + path + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
@@ -395,7 +395,7 @@ public class SystemController {
                 statement.close();
             }
             System.out.println("[INFO] selected file's ids stored in given folder");
-            
+
             //usuń te pliki z tabeli files
             for (int i = 0; i < fileIDs.size(); i++) {
                 sqlQuery = "delete from files where id='" + fileIDs.get(i) + "'";
@@ -405,7 +405,7 @@ public class SystemController {
                 }
             }
             System.out.println("[INFO] deleted files stored in given folder");
-      
+
             //usuń powiązanie danego folderu z userem
             sqlQuery = "delete from users_folders where folderId='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
@@ -413,7 +413,7 @@ public class SystemController {
                 statement.close();
             }
             System.out.println("[INFO] deleted record from users_folders table");
-            
+
             //usuń powiązanie folderu z danymi plikami(które i tak usunęliśmy)
             sqlQuery = "delete from folders_files where folderId='" + folderID + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
@@ -459,6 +459,56 @@ public class SystemController {
             }
         }
         return directory.delete();
+    }
+
+    public Long getFolderId(String path) {
+        
+        System.out.println("shared path: " + path);
+        long folderId = 0;
+        try {
+            DBConnector db = new DBConnector();
+            String sqlQuery = "select id from folders where directPath='" + path + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    folderId = rs.getLong(1);
+                }
+                statement.close();
+            }          
+            db.closeConnection();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        System.out.println("shared folder id: " + folderId);
+        return folderId;
+    }
+
+    public boolean isFolderOwner(Long folderId, String login) {
+
+        int isOwner = 0;
+        try {
+            long userID = getUserId(login);
+            DBConnector db = new DBConnector();
+            String sqlQuery = "select isOwner from users_folders where userId='" + userID + "' and folderId='" + folderId + "'";
+            try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    isOwner = rs.getInt(1);
+                }
+                statement.close();
+            }
+            
+            db.closeConnection();
+            if(isOwner==0) {
+                return false;
+            }
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     public List<Folder> getUserFolders(User user) {
