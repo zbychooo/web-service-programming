@@ -221,4 +221,11 @@ public class SystemService {
         return folders;
     }
     
+    @GET
+    @Path("/myfolderss")
+    @Produces(MediaType.APPLICATION_XML) 
+    public String testGet(@Context SecurityContext sec){
+        return "bourne";
+    }
+    
 }
