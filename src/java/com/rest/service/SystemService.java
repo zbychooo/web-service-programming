@@ -151,6 +151,18 @@ public class SystemService {
     } 
     
     @GET
+    @Path("/downloadFile/{path}/{fileName}")
+    public String downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+        
+        String login = sec.getUserPrincipal().getName();
+        boolean hasPermision = systemController.canBeDownloaded(path, login);
+        if(hasPermision) {
+            return systemController.getDirectFilePath(path, fileName);
+        }
+        return "Error";
+    }
+    
+    @GET
     @Path("/deleteFolder/{folderPath}")
     public Response deleteFolder(@PathParam("folderPath") String path, @Context SecurityContext sec){
         path = sec.getUserPrincipal().getName() + "//" + path;
