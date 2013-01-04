@@ -7,10 +7,9 @@ import com.rest.model.User;
 import com.sun.jersey.spi.resource.Singleton;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,7 +31,8 @@ public class ClientService {
     @GET
     @Path("/home/{cfi}")
     @Produces("text/html")
-    public Response index1(@PathParam("cfi") String currentFolderIndex, @Context HttpServletRequest request, @Context SecurityContext sec) {
+    public Response index1(@PathParam("cfi") String currentFolderIndex, @Context HttpServletRequest request, 
+    @Context HttpServletResponse response, @Context SecurityContext sec) {
         //add stuff necessary for the page to display correctly
         SystemService ss = new SystemService();
         Response temp = ss.getRemainingStorageSize(sec);
@@ -42,7 +42,7 @@ public class ClientService {
 //            request.getSession().setAttribute("user", currentUser);
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             System.out.println("request is working :| ");
-            systemClient = new SystemClient(currentUser);
+            systemClient = new SystemClient(currentUser,request,response);
             List<Folder> folders = new ArrayList<>();
             folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
@@ -63,7 +63,8 @@ public class ClientService {
     @GET
     @Path("/myfolders/{mode}")
     @Produces("text/html")
-    public Response index(@PathParam("mode") String mode, @Context HttpServletRequest request, @Context SecurityContext sec) {
+    public Response index(@PathParam("mode") String mode, @Context HttpServletRequest request, 
+    @Context HttpServletResponse response, @Context SecurityContext sec) {
         SystemService ss = new SystemService();
         Response temp = ss.getRemainingStorageSize(sec);
         try{
@@ -71,9 +72,8 @@ public class ClientService {
             User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
             request.getSession().setAttribute("user", currentUser);
             request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
-            systemClient = new SystemClient(currentUser);
-            List<Folder> folders = new ArrayList<>();
-            
+            systemClient = new SystemClient(currentUser,request,response);
+            List<Folder> folders = new ArrayList<>();            
             for(Folder f : systemClient.getFolderList()){
                 if(mode.equals("all")){
                     folders.add(f);

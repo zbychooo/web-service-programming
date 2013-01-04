@@ -1,16 +1,18 @@
 package com.rest.client;
 
-import com.rest.controller.UsersController;
 import com.rest.model.Folder;
 import com.rest.model.User;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 
 /**
@@ -23,7 +25,41 @@ public class SystemClient {
     private String URL_LOGIN = "http://localhost:8080/RESTCloud/j_security_check";
     private String URL_BASE = "http://localhost:8080/RESTCloud/";
     private User currentUser;
+    private HttpServletRequest wsRequest;
+    private HttpServletResponse wsResponse;
+    
+    public SystemClient(User user, HttpServletRequest request,HttpServletResponse response){
+        ClientConfig config = new DefaultClientConfig();
+        client = Client.create(config);
+        client.addFilter(new SystemClientFilter());
+        currentUser = user;    
+        wsRequest = request;
+        wsResponse = response;
+        try{
+        request.login(user.getLogin(), user.getLogin());
+        } catch(Exception e){
+            System.out.println("Except: "+e.getMessage());
+        }
+        try{
+            System.out.println("AUTH: "+request.authenticate(response));
+        } catch(Exception e){
+            System.out.println("Except: "+e.getMessage());
+        }
         
+        webResource = client.resource(URL_BASE+"rest/systemService/myfolderss");
+        
+        WebResource.Builder builder = webResource.accept(MediaType.APPLICATION_XML);
+        for(Cookie c : request.getCookies()){
+            builder = builder.cookie(new NewCookie(c.getName(),c.getValue()));
+        }
+        try{
+            String str = builder.get(String.class);
+            System.out.println("str: "+str);
+        } catch(Exception e){
+            System.out.println("Exception in getfolderlist "+e.getMessage());
+        }
+    }
+    
     public SystemClient(User user){
         ClientConfig config = new DefaultClientConfig();
         client = Client.create(config);
@@ -184,7 +220,7 @@ public class SystemClient {
     
     public List<Folder> getFolderList(){
         System.out.println("Get_FOLDER_LIST()");
-        WebResource.Builder builder = prepareRequest("rest/systemService/myfolders");
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/myfolders");
         try{
             List<Folder> result = builder.get(new GenericType<List<Folder>>(){});
             if(result != null){
@@ -215,8 +251,30 @@ public class SystemClient {
                 System.out.println("COOKIE");
                 builder = builder.cookie(c);
             }
-        }        
+        }   
+        return builder;
+    }
+    
+    private WebResource.Builder prepareWSRequest(String address){
+             
+        if(!wsRequest.isRequestedSessionIdValid()){
+            try{
+                wsRequest.login(currentUser.getLogin(), currentUser.getLogin());
+            }catch(Exception e){
+                System.out.println("Except: "+e.getMessage());
+            }
+            try{
+                System.out.println("AUTH: "+wsRequest.authenticate(wsResponse));
+            } catch(Exception e){
+                System.out.println("Except: "+e.getMessage());
+            }
+        }
+        webResource = client.resource(URL_BASE+address);
+        WebResource.Builder builder = webResource.getRequestBuilder();
         
+        for(Cookie c : wsRequest.getCookies()){
+            builder = builder.cookie(new NewCookie(c.getName(),c.getValue()));
+        }
         return builder;
     }
 }
