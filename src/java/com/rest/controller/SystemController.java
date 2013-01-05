@@ -580,9 +580,9 @@ public class SystemController {
         return false;
     }
     
-    public String getDirectFilePath(String path, String fileName){
+    public File getDirectFilePath(String path, String fileName){
         //TODO: ?????
-        return MAIN_STORAGE_FOLDER + path + "\\" + fileName;
+        return new File(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
     }
     
     

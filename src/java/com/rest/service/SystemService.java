@@ -8,11 +8,9 @@ import com.rest.model.UserFile;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
+import java.io.File;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -152,14 +150,14 @@ public class SystemService {
     
     @GET
     @Path("/downloadFile/{path}/{fileName}")
-    public String downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+    public File downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
         
         String login = sec.getUserPrincipal().getName();
         boolean hasPermision = systemController.canBeDownloaded(path, login);
         if(hasPermision) {
             return systemController.getDirectFilePath(path, fileName);
         }
-        return "Error";
+        return null;
     }
     
     @GET
