@@ -37,8 +37,6 @@
                         </form>
                         <input type="button" id="sharefoldermenu" value="Share folder" />
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
-                        <input type="text" id="searchinlistinput" />
-                        <input type="button" id="searchinlisttrigger" value="search" />
                         <br/>
 <!--                        <p><strong>Current folder: {folders.get(currentFolderIndex).name}</strong></p>-->
                     </div>
