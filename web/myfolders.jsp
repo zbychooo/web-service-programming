@@ -129,6 +129,20 @@
                                         <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
                                 </li>
+				<li>
+                                    <!-- click on "Other available folders" and the user should be redirected to the list of 
+                                    other available folders, that belong to other users -->
+                                    <h3><a href="rest/myfolders/shared">Other available folders</a></h3>
+                                    <c:set var="counter" value="${0}" /> 
+                                    <c:forEach items="${folders}" var="folder">
+                                        <c:if test="${folder.user.login.equals(user.login)==false}" >
+                                            <ul>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                            </ul>
+                                        </c:if>
+                                        <c:set var="counter" value="${counter+1}" />
+                                    </c:forEach>
+                                </li>
                             </ul>
 			</li>
 			<li id="search">

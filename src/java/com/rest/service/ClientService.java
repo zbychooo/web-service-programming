@@ -64,18 +64,32 @@ public class ClientService {
     public Response index(@PathParam("mode") String mode, @Context HttpServletRequest request, 
     @Context HttpServletResponse response, @Context SecurityContext sec) {
         try{
-            UsersController uc = new UsersController();
-            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
-            request.getSession().setAttribute("user", currentUser);
-            String userRemainingSpace = systemClient.getUserRemainingSpace();
-            request.getSession().setAttribute("remainingSpace", userRemainingSpace);
-            systemClient = new SystemClient(currentUser,request,response);
+            UsersController uc = new UsersController();         
+            System.out.println("1");
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());       
+            System.out.println("2");
+            request.getSession().setAttribute("user", currentUser);       
+            System.out.println("3");
+            String userRemainingSpace = systemClient.getUserRemainingSpace();       
+            System.out.println("4");
+            request.getSession().setAttribute("remainingSpace", userRemainingSpace);       
+            System.out.println("5");
+            systemClient = new SystemClient(currentUser,request,response);       
+            System.out.println("6");
+            
             List<Folder> folders = new ArrayList<>();            
+            System.out.println("before folders");
             for(Folder f : systemClient.getFolderList()){
-                if(mode.equals("all")){
-                    folders.add(f);
-                } else if(mode.equals("shared")){
-                    if(!f.getShared().isEmpty()){
+                if(f.getUser().getLogin().equals(currentUser.getLogin())){
+                    if(mode.equals("all")){
+                        folders.add(f);
+                    } else if(mode.equals("shared")){
+                        if(!f.getShared().isEmpty()){
+                            folders.add(f);
+                        }
+                    }
+                } else {
+                    if(mode.equals("other")){
                         folders.add(f);
                     }
                 }
@@ -83,7 +97,7 @@ public class ClientService {
             request.getSession().setAttribute("folders", folders);
             System.out.println("after folders");
         } catch(Exception e){
-            System.out.println("request ain't workin'.");
+            System.out.println("request ain't workin' "+e.getMessage());
         }
         //return a page
         try{

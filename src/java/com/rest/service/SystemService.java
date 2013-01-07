@@ -233,6 +233,7 @@ public class SystemService {
         System.out.println("SEC: "+sec.getUserPrincipal().getName());
         User user = systemController.getUser(sec.getUserPrincipal().getName(), null);
         folders.addAll(systemController.getUserFolders(user));
+//        folders.addAll(systemController.getUserFolders(user,false));
         for(Folder f : folders){
             System.out.println("FOlders: "+f.getFiles().size()+" - "+f.getShared().size());
         }
@@ -244,6 +245,7 @@ public class SystemService {
     @Path("/myfolderss")
     @Produces(MediaType.APPLICATION_XML) 
     public String testGet(@Context SecurityContext sec){
+        
         return "bourne";
     }
     
