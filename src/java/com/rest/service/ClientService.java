@@ -64,18 +64,13 @@ public class ClientService {
     public Response index(@PathParam("mode") String mode, @Context HttpServletRequest request, 
     @Context HttpServletResponse response, @Context SecurityContext sec) {
         try{
-            UsersController uc = new UsersController();         
-            System.out.println("1");
-            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());       
-            System.out.println("2");
+            UsersController uc = new UsersController();       
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName()); 
             request.getSession().setAttribute("user", currentUser);       
-            System.out.println("3");
-            String userRemainingSpace = systemClient.getUserRemainingSpace();       
-            System.out.println("4");
-            request.getSession().setAttribute("remainingSpace", userRemainingSpace);       
-            System.out.println("5");
-            systemClient = new SystemClient(currentUser,request,response);       
-            System.out.println("6");
+            
+            systemClient = new SystemClient(currentUser,request,response);   
+            String userRemainingSpace = systemClient.getUserRemainingSpace();
+            request.getSession().setAttribute("remainingSpace", userRemainingSpace);
             
             List<Folder> folders = new ArrayList<>();            
             System.out.println("before folders");
