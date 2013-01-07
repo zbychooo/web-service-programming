@@ -204,7 +204,16 @@ input, textarea, select {
     width: 90%;
     padding-bottom: 10px;
     padding-top: 10px;
+    display: inline-block;
 /*    margin: 0 auto 0 auto;*/
+}
+
+#fileform {
+    display: inline-block;
+}
+
+#uploadfilemenu {
+    display: inline-block;
 }
 
 /* Page */

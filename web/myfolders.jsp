@@ -29,16 +29,13 @@
                 <!-- start content -->
                 <div id="content">
                     <div id="fileactions">
-                        <input type="button" id="uploadfilemenu" value="Upload" 
-                               onclick="window.location.href='upload.jsp'"/>
                         <form id="fileform" action="rest/systemService/createFolder" method="POST" >
-                            <input type="text" name="foldername" value="Folder Name" />
+                            <input type="text" name="folderName" value="Folder Name" />
                             <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
                         <input type="button" id="sharefoldermenu" value="Share folder" />
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <br/>
-<!--                        <p><strong>Current folder: {folders.get(currentFolderIndex).name}</strong></p>-->
                     </div>
                     <br/>
                     <table>
@@ -62,9 +59,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <c:set var="counter" value="${0}" /> 
                             <c:if test="${folders.isEmpty()==false}" >
                             <c:forEach items="${folders}" var="folder">
-                                <tr>
+                                <tr onclick="document.location = 'rest/home/${counter}';">
                                     <td>
                                         <input type="checkbox" id="select" /> 
                                     </td>
@@ -75,12 +73,13 @@
                                         <c:out value="${folder.dateStamp}" />
                                     </td>
                                     <td>
-                                        <input type="checkbox" id="share" checked="${folder.shared.isEmpty()!=true}" disabled="true" /> 
+                                        <input type="checkbox" id="share" checked="${folder.shared.isEmpty()==false}" disabled="true" /> 
                                     </td>
                                     <td>
                                         <input type="button" id="delete" value="X" /> 
                                     </td>
                                 </tr>
+                                <c:set var="counter" value="${counter+1}" />
                             </c:forEach>
                             </c:if>
                             <c:if test="${folders.isEmpty()==true}">

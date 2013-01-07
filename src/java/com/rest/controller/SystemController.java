@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class SystemController {
 
-    public static final long MAX_STORAGE = 204800; //200MB = 2048kB
+    public static final long MAX_STORAGE = 204800; //200MB = 204800kB
     private static final String MAIN_STORAGE_FOLDER = "D:\\RESTCloudStorage\\";
 
     /**
@@ -76,11 +76,13 @@ public class SystemController {
 
         for (File file : directory.listFiles()) {
             if (file.isFile()) {
+        System.out.println("CALCULATEFILE: "+file.length());
                 length += file.length();
             } else {
-                length += calculateFolderSize(file, length);
+                length += calculateFolderSize(file, 0);
             }
         }
+        
         return length;
     }
 

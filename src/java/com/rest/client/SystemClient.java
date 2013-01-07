@@ -36,7 +36,7 @@ public class SystemClient {
         wsRequest = request;
         wsResponse = response;
         try{
-        request.login(user.getLogin(), user.getLogin());
+            request.login(user.getLogin(), user.getLogin());
         } catch(Exception e){
             System.out.println("Except: "+e.getMessage());
         }
@@ -230,6 +230,20 @@ public class SystemClient {
             System.out.println("Exception in getfolderlist "+e.getMessage());
         }
         return new ArrayList<>();
+    }
+    
+    public String getUserRemainingSpace(){
+        System.out.println("Get_USER_REMAINING_SPACE()");
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/getRemainingStorageSize");
+        try{
+            String result = builder.get(String.class);
+            if(result != null){
+                return result;
+            }
+        } catch(Exception e){
+            System.out.println("Exception in getuserremainingspace "+e.getMessage());
+        }
+        return "";
     }
     
     private WebResource.Builder prepareRequest(String address){
