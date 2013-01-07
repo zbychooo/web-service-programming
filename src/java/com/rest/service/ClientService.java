@@ -33,16 +33,14 @@ public class ClientService {
     @Produces("text/html")
     public Response index1(@PathParam("cfi") String currentFolderIndex, @Context HttpServletRequest request, 
     @Context HttpServletResponse response, @Context SecurityContext sec) {
-        //add stuff necessary for the page to display correctly
-        SystemService ss = new SystemService();
-        Response temp = ss.getRemainingStorageSize(sec);
         try{
             UsersController uc = new UsersController();
             User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
 //            request.getSession().setAttribute("user", currentUser);
-            request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
             System.out.println("request is working :| ");
             systemClient = new SystemClient(currentUser,request,response);
+            String userRemainingSpace = systemClient.getUserRemainingSpace();
+            request.getSession().setAttribute("remainingSpace", userRemainingSpace);
             List<Folder> folders = new ArrayList<>();
             folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
@@ -65,13 +63,12 @@ public class ClientService {
     @Produces("text/html")
     public Response index(@PathParam("mode") String mode, @Context HttpServletRequest request, 
     @Context HttpServletResponse response, @Context SecurityContext sec) {
-        SystemService ss = new SystemService();
-        Response temp = ss.getRemainingStorageSize(sec);
         try{
             UsersController uc = new UsersController();
             User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
             request.getSession().setAttribute("user", currentUser);
-            request.getSession().setAttribute("remainingSpace", (String)temp.getEntity());
+            String userRemainingSpace = systemClient.getUserRemainingSpace();
+            request.getSession().setAttribute("remainingSpace", userRemainingSpace);
             systemClient = new SystemClient(currentUser,request,response);
             List<Folder> folders = new ArrayList<>();            
             for(Folder f : systemClient.getFolderList()){

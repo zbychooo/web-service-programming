@@ -10,8 +10,11 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -47,8 +50,9 @@ public class SystemService {
     @POST
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response createFolder(@FormParam("folderName") String folderName, @Context SecurityContext sec) {
-
+    public Response createFolder(@FormParam("folderName") String folderName, @Context HttpServletRequest request,
+    @Context SecurityContext sec) {
+        
         String login = sec.getUserPrincipal().getName();
 
         boolean isCreated = systemController.createFolder(
@@ -58,8 +62,11 @@ public class SystemService {
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndUser(folderId, login, 1);
-            
-            return Response.ok().entity("isCreated: " + isCreated).build();
+            try{
+                return Response.seeOther(new URI("../")).build();
+            } catch(Exception ex){
+                return Response.ok().entity("Created").build();
+            }
         }
         return Response.ok().entity("Error: " + ErrorsController.FOLDER_ALREADY_EXISTS).build();
     }
@@ -209,6 +216,8 @@ public class SystemService {
             long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
             long availableSpace = SystemController.MAX_STORAGE - folderSize;
             Double availableSpaceD = availableSpace / 1000.0;
+            
+            System.out.println("AVAILABLE: "+folderSize+" - "+availableSpace+" - "+availableSpaceD);
             
             return Response.ok().entity(Double.toString(availableSpaceD)).build();
         } catch(Exception e){
