@@ -3,14 +3,36 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Hamster.xxx - Best File Storage service</title>
+        <title>Hamster.net - Best File Storage service</title>
         <link href="default.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript">
+            function select(id)
+            {
+                if(document.getElementById(id).checked)
+                    document.getElementById(id).checked=true;
+                else
+                    document.getElementById(id).checked=false;
+            }
+            function selectAll(len)
+            {
+                if(document.getElementById('selectall').checked)
+                    for (var i=0;i<len;i++)
+                    { 
+                        document.getElementById(i).checked=true;
+                    }
+                else
+                    for (var i=0;i<len;i++)
+                    { 
+                        document.getElementById(i).checked=false;
+                    }
+            }
+        </script>
     </head>
     <body>
         <div id="header" >
             <div id="logo">
-                <h1><a href="#">Hamster.xxx</a></h1>
-                <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
+                <h1><a href="#">Hamster.net</a></h1>
+                <h2>Best File Storage service</h2>
             </div>
             <div id="menu">
                 <ul id="accountmenu">
@@ -38,13 +60,13 @@
                         <br/>
                     </div>
                     <br/>
-                    <table>
+                    <table class="contentTable">
                         <thead>
                             <tr>
                                 <td>
-                                    <input type="checkbox" id="selectall" />
+                                    <input type="checkbox" id="selectall" onclick="selectAll(${foldersdm.size()})" />
                                 </td>
-                                <td>
+                                <td class="myfoldersname">
                                     Name
                                 </td>
                                 <td>
@@ -62,20 +84,20 @@
                             <c:set var="counter" value="${0}" /> 
                             <c:if test="${folders.isEmpty()==false}" >
                             <c:forEach items="${foldersdm}" var="folder">
-                                <tr onclick="document.location = 'rest/home/${counter}';">
+                                <tr>
                                     <td>
-                                        <input type="checkbox" id="select" /> 
+                                        <input type="checkbox" id="${counter}" onclick="select(${counter})" /> 
                                     </td>
-                                    <td>
+                                    <td onclick="document.location = 'rest/home/${counter}';" class="myfoldersname">
                                         <c:out value="${folder.name}" />
                                     </td>
-                                    <td>
+                                    <td onclick="document.location = 'rest/home/${counter}';">
                                         <c:out value="${folder.dateStamp}" />
                                     </td>
-                                    <td>
+                                    <td onclick="document.location = 'rest/home/${counter}';">
                                         <input type="checkbox" id="share" checked="${folder.shared.isEmpty()==false}" disabled="true" /> 
                                     </td>
-                                    <td>
+                                    <td >
                                         <input type="button" id="delete" value="X" /> 
                                     </td>
                                 </tr>
@@ -108,9 +130,9 @@
                                     <c:set var="counter" value="${0}" />
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.user.login.equals(user.login)==true}" >
-                                        <ul>
-                                            <li><a href="rest/home/${counter}">${folder.name}</a></li>
-                                        </ul>
+                                            <ul>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                            </ul>
                                         </c:if>
                                         <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
@@ -165,7 +187,7 @@
             </div>            
         </div>
         <div id="footer">
-            <p id="legal">(c) 2012-2013 Hamster.xxx. Designed by Sebastian Pasiecznik and Zbyszko Natkański.</p>
+            <p id="legal">(c) 2012-2013 Hamster.net. Designed by Sebastian Pasiecznik and Zbyszko Natkański.</p>
         </div>
     </body>
 </html>
