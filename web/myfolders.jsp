@@ -26,6 +26,12 @@
                         document.getElementById(i).checked=false;
                     }
             }
+            function shareFolder()
+            {
+                //get selected rows (first column checked
+                //for each of them invoke the shareFolder method
+                //refresh the site, so UI would include changes
+            }
         </script>
     </head>
     <body>
@@ -55,7 +61,7 @@
                             <input type="text" name="folderName" value="Folder Name" />
                             <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
-                        <input type="button" id="sharefoldermenu" value="Share folder" />
+                        <input type="submit" id="sharefoldermenu" value="Share folder" onclick="shareFolder()" />
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <br/>
                     </div>
@@ -169,10 +175,10 @@
 			</li>
 			<li id="search">
                             <h2><b class="text1"> Global search</b></h2>
-                            <form method="get" action="">
+                            <form action="rest/systemService/search" method="POST">
 				<fieldset>
-                                    <input type="text" id="s" name="s" value="" />
-                                    <input type="submit" id="x" value="Search" />
+                                    <input type="text" name="searchPhrase" value="" />
+                                    <input type="submit" id="searchButton" value="Search" />
                                     <select id="searchby" >
                                         <option id="byusers" value="Users" >Users</option>
                                         <option id="bytags" value="Tags" >Tags</option>
