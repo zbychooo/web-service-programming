@@ -240,7 +240,11 @@ input, textarea, select {
 }
 
 .myfoldersname {
-    width: 60%;    
+    width: 70%;    
+}
+
+.homefilenamecell {
+    width: 50%;  
 }
 
 /* Post */

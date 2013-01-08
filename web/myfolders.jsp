@@ -26,8 +26,14 @@
                         document.getElementById(i).checked=false;
                     }
             }
-            function shareFolder()
+            function shareFolder(len)
             {
+//                for (var i=0;i<len;i++)
+//                    { 
+//                        if(document.getElementById(i).checked){
+//                            alert('${foldersdm.get(i).name}');
+//                        }
+//                    }
                 //get selected rows (first column checked
                 //for each of them invoke the shareFolder method
                 //refresh the site, so UI would include changes
@@ -61,7 +67,7 @@
                             <input type="text" name="folderName" value="Folder Name" />
                             <input type="submit" id="newfoldermenu" value="New folder" />
                         </form>
-                        <input type="submit" id="sharefoldermenu" value="Share folder" onclick="shareFolder()" />
+                        <input type="submit" id="sharefoldermenu" value="Share folder" onclick="shareFolder(${foldersdm.size()})" />
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <br/>
                     </div>
@@ -79,16 +85,13 @@
                                     Added
                                 </td>
                                 <td>
-                                    Shared
-                                </td>
-                                <td>
                                     Actions
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
                             <c:set var="counter" value="${0}" /> 
-                            <c:if test="${folders.isEmpty()==false}" >
+                            <c:if test="${foldersdm.isEmpty()==false}" >
                             <c:forEach items="${foldersdm}" var="folder">
                                 <tr>
                                     <td>
@@ -99,9 +102,6 @@
                                     </td>
                                     <td onclick="document.location = 'rest/home/${counter}';">
                                         <c:out value="${folder.dateStamp}" />
-                                    </td>
-                                    <td onclick="document.location = 'rest/home/${counter}';">
-                                        <input type="checkbox" id="share" checked="${folder.shared.isEmpty()==false}" disabled="true" /> 
                                     </td>
                                     <td >
                                         <input type="button" id="delete" value="X" /> 

@@ -34,17 +34,19 @@ public class ClientService {
     public Response index1(@PathParam("cfi") String currentFolderIndex, @Context HttpServletRequest request, 
     @Context HttpServletResponse response, @Context SecurityContext sec) {
         try{
-            UsersController uc = new UsersController();
-            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName());
-//            request.getSession().setAttribute("user", currentUser);
-            System.out.println("request is working :| ");
+            UsersController uc = new UsersController();       
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName()); 
+            request.getSession().setAttribute("user", currentUser);  
+            
             systemClient = new SystemClient(currentUser,request,response);
             String userRemainingSpace = systemClient.getUserRemainingSpace();
             request.getSession().setAttribute("remainingSpace", userRemainingSpace);
             
             List<Folder> folders = new ArrayList<>();
-            folders.addAll(systemClient.getFolderList());
+            folders.addAll((List<Folder>)request.getSession().getAttribute("folders"));
+//            folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
+            
             System.out.println("before cfi casting");
             request.getSession().setAttribute("currentFolderIndex", Long.valueOf(currentFolderIndex));
             System.out.println("request2");
