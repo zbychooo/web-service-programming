@@ -61,7 +61,7 @@
                         <tbody>
                             <c:set var="counter" value="${0}" /> 
                             <c:if test="${folders.isEmpty()==false}" >
-                            <c:forEach items="${folders}" var="folder">
+                            <c:forEach items="${foldersdm}" var="folder">
                                 <tr onclick="document.location = 'rest/home/${counter}';">
                                     <td>
                                         <input type="checkbox" id="select" /> 
@@ -82,7 +82,7 @@
                                 <c:set var="counter" value="${counter+1}" />
                             </c:forEach>
                             </c:if>
-                            <c:if test="${folders.isEmpty()==true}">
+                            <c:if test="${foldersdm.isEmpty()==true}">
                                 <tr>
                                     <td colspan="5">
                                         There are no folders in your account.
@@ -92,9 +92,7 @@
                         </tbody>
                     </table>
                     <br/>        
-                    <a href="upload.jsp">upload</a> |                    
-                    <a href="rest/systemService/getRemainingStorageSize">get total space size</a> |
-                    <a href="rest/userService/getUserLogin">get User login</a>
+                    <a href="upload.jsp">upload</a>
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->
@@ -109,9 +107,11 @@
                                     <h3><a href="rest/myfolders/all" >My folders </a></h3>
                                     <c:set var="counter" value="${0}" />
                                     <c:forEach items="${folders}" var="folder">
+                                        <c:if test="${folder.user.login.equals(user.login)==true}" >
                                         <ul>
                                             <li><a href="rest/home/${counter}">${folder.name}</a></li>
                                         </ul>
+                                        </c:if>
                                         <c:set var="counter" value="${counter+1}" />
                                     </c:forEach>
                                 </li>
@@ -132,7 +132,7 @@
 				<li>
                                     <!-- click on "Other available folders" and the user should be redirected to the list of 
                                     other available folders, that belong to other users -->
-                                    <h3><a href="rest/myfolders/shared">Other available folders</a></h3>
+                                    <h3><a href="rest/myfolders/other">Other available folders</a></h3>
                                     <c:set var="counter" value="${0}" /> 
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.user.login.equals(user.login)==false}" >

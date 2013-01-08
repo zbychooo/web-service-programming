@@ -235,7 +235,14 @@ public class SystemService {
         folders.addAll(systemController.getUserFolders(user));
 //        folders.addAll(systemController.getUserFolders(user,false));
         for(Folder f : folders){
-            System.out.println("FOlders: "+f.getFiles().size()+" - "+f.getShared().size());
+            System.out.println("NAME: "+f.getName()+" - "+f.getDateStamp()+" - "+f.getDirectPath());
+            System.out.println("FOL - USER: "+f.getId()+" - "+f.getUser().getLogin()+" - "+f.getUser().getUid());
+            for(UserFile file : f.getFiles()){
+                System.out.println("FILE: "+file.getFileName());
+            }
+            for(User u : f.getShared()){
+                System.out.println("SHUSER: "+u.getLogin()+" - "+u.getUid());
+            }
         }
         System.out.println("MY FOLDERS "+folders.size());
         return folders;

@@ -599,13 +599,31 @@ public class SystemController {
                 statement.setLong(1, user.getUid());
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    folders.add(new Folder(rs.getLong("id"), user, rs.getString("name"),
+                    if(rs.getBoolean("isOwner")){
+                        folders.add(new Folder(rs.getLong("id"), user, rs.getString("name"),
                             rs.getString("dateStamp"), rs.getString("directPath")));
+                    } else {
+                        folders.add(new Folder(rs.getLong("id"), null, rs.getString("name"),
+                            rs.getString("dateStamp"), rs.getString("directPath")));
+                    }
                 }
                 rs.close();
                 statement.close();
             }
             for (Folder currentFolder : folders) {
+                if(currentFolder.getUser() == null){
+                    try (PreparedStatement statement = db.getConnection().prepareStatement(
+                            "SELECT * FROM users_folders AS uf,users AS u where uf.folderId=? and u.id=uf.userId and uf.isOwner='1'")) {
+                        statement.setLong(1, currentFolder.getId());
+                        ResultSet rs = statement.executeQuery();
+                        while (rs.next()) {
+                            currentFolder.setUser(new User(rs.getLong("id"), rs.getString("login"), rs.getString("password"),
+                                rs.getString("username"), rs.getString("role")));
+                        }
+                        rs.close();
+                        statement.close();
+                    }
+                }
                 try (PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM users_folders AS uf,users AS u where uf.folderId=? and u.id=uf.userId and uf.isOwner='0'")) {
                     statement.setLong(1, currentFolder.getId());
                     ResultSet rs = statement.executeQuery();
@@ -658,6 +676,7 @@ public class SystemController {
                 rs.close();
                 statement.close();
             }
+            List<Long>ids = new ArrayList<>();
             for (Folder currentFolder : folders) {
                 try (PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM users_folders AS uf,users AS u where uf.folderId=? and u.id=uf.userId and uf.isOwner='0'")) {
                     statement.setLong(1, currentFolder.getId());

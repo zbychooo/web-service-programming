@@ -41,6 +41,7 @@ public class ClientService {
             systemClient = new SystemClient(currentUser,request,response);
             String userRemainingSpace = systemClient.getUserRemainingSpace();
             request.getSession().setAttribute("remainingSpace", userRemainingSpace);
+            
             List<Folder> folders = new ArrayList<>();
             folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
@@ -74,22 +75,26 @@ public class ClientService {
             
             List<Folder> folders = new ArrayList<>();            
             System.out.println("before folders");
-            for(Folder f : systemClient.getFolderList()){
+            folders.addAll(systemClient.getFolderList());
+            request.getSession().setAttribute("folders", folders);
+            
+            List<Folder> foldersDM = new ArrayList<>(); 
+            for(Folder f : folders){
                 if(f.getUser().getLogin().equals(currentUser.getLogin())){
                     if(mode.equals("all")){
-                        folders.add(f);
+                        foldersDM.add(f);
                     } else if(mode.equals("shared")){
                         if(!f.getShared().isEmpty()){
-                            folders.add(f);
+                            foldersDM.add(f);
                         }
                     }
                 } else {
                     if(mode.equals("other")){
-                        folders.add(f);
+                        foldersDM.add(f);
                     }
                 }
             }
-            request.getSession().setAttribute("folders", folders);
+            request.getSession().setAttribute("foldersdm", foldersDM);
             System.out.println("after folders");
         } catch(Exception e){
             System.out.println("request ain't workin' "+e.getMessage());
