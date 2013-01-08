@@ -215,8 +215,7 @@ public class SystemService {
         try{
             long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
             long availableSpace = SystemController.MAX_STORAGE - folderSize;
-            Double availableSpaceD = availableSpace / 1000.0;
-            
+            Double availableSpaceD = availableSpace / 1000.0;            
             System.out.println("AVAILABLE: "+folderSize+" - "+availableSpace+" - "+availableSpaceD);
             
             return Response.ok().entity(Double.toString(availableSpaceD)).build();
