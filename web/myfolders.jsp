@@ -29,7 +29,7 @@
                 //                    document.getElementById(id).checked=true;
                 //                else
                 //                    document.getElementById(id).checked=false;
-                document.getElementById("selectedAll").checked=false
+                document.getElementById("selectedall").checked=false
 
             }
             function selectAll(len)
@@ -82,6 +82,28 @@
                         mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                         mypostrequest.send(parameters);
                     }
+                }
+                
+                function unshareFolder(folderName){
+                    console.log("folderName: ", folderName);
+                    
+                    var mypostrequest=new ajaxRequest();
+                        mypostrequest.onreadystatechange=function(){
+                            if (mypostrequest.readyState==4){
+                                if (mypostrequest.status==200 || window.location.href.indexOf("http")==-1){
+                                    document.getElementById("result").innerHTML=mypostrequest.responseText;
+                                }
+                                else{
+                                    alert("An error has occured making the request");
+                                }
+                            }
+                        }
+                        var parameters="filePath="+folderName;
+                        mypostrequest.open("POST", "rest/systemService/unshareFolder", true);
+                        mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        mypostrequest.send(parameters);
+                    
+                    
                 }
         </script>
     </head>
@@ -198,7 +220,7 @@
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.shared.isEmpty()==false}" >
                                             <ul>
-                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a> <button name="unshareButton" onclick="unshareFolder('${folder.name}')" >Unshare</button></li>
                                             </ul>
                                         </c:if>
                                         <c:set var="counter" value="${counter+1}" />
