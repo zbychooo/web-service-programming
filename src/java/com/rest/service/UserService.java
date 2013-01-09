@@ -1,5 +1,6 @@
 package com.rest.service;
 
+import com.rest.controller.SystemController;
 import com.rest.controller.UsersController;
 import com.sun.jersey.api.JResponse;
 import com.sun.jersey.spi.resource.Singleton;
@@ -23,7 +24,8 @@ import javax.ws.rs.core.*;
 public class UserService {
 
     UsersController usersController = new UsersController();
-
+    SystemController systemController = new SystemController();
+    
     @POST
     @Path("/register")
     @Produces(MediaType.TEXT_PLAIN)
@@ -31,11 +33,13 @@ public class UserService {
             @FormParam("password") String password,
             @FormParam("confirm_password") String confirmPassword,
             @FormParam("username") String username) {
-
+        
+        
         String returnMessage = usersController.checkUser(login, password, confirmPassword, username);
-
+        System.out.println("hello: " + returnMessage);
         if (returnMessage.equals("OK")) {
             usersController.add(login, password, username);
+            systemController.createSpace(login);
         }
         try{
             return Response.seeOther(new URI("../index.jsp")).build();
