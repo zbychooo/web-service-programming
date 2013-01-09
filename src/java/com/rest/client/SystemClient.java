@@ -7,6 +7,7 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.api.representation.Form;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.Cookie;
@@ -245,6 +246,20 @@ public class SystemClient {
         }
         return "";
     }
+    
+    public File downloadFile(String filePath,String fileName){
+        System.out.println("DOWNLOAD()");
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/downloadFile/"+filePath+"/"+fileName);
+        try{
+            File result = builder.get(File.class);
+            if(result != null){
+                return result;
+            }
+        } catch(Exception e){
+            System.out.println("Exception in download "+e.getMessage());
+        }
+        return null;
+    }    
     
     private WebResource.Builder prepareRequest(String address){
         //make first request, that do not really counts

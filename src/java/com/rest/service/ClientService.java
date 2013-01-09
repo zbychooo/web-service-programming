@@ -5,6 +5,7 @@ import com.rest.controller.UsersController;
 import com.rest.model.Folder;
 import com.rest.model.User;
 import com.sun.jersey.spi.resource.Singleton;
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,5 +108,30 @@ public class ClientService {
         } catch(Exception e){
             return Response.ok(":(").build();
         }
+    }
+    
+    @GET
+    @Path("/download/{filePath}/{fileName}")
+    public Response download(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName, @Context HttpServletRequest request, 
+        @Context HttpServletResponse response, @Context SecurityContext sec){
+        
+        try{
+            UsersController uc = new UsersController();       
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName()); 
+            request.getSession().setAttribute("user", currentUser);       
+            
+            systemClient = new SystemClient(currentUser,request,response);   
+            File file = systemClient.downloadFile(filePath,fileName);
+            if(file == null){
+                System.out.println("FILE is null");
+            } else {
+                return Response.ok(file).build();
+//                request.getSession().setAttribute("file", file);
+            }
+        } catch(Exception e){
+            
+        }
+        
+        return null;
     }
 }

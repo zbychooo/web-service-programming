@@ -133,8 +133,9 @@ public class SystemService {
     public Response shareFile(@FormParam("filePath") String filePath, @FormParam("shareLogin") String shareLogin, @Context SecurityContext sec) {
         
         //System.out.println("\n ----->" + filePath + " " + shareLogin);
-        filePath = sec.getUserPrincipal().getName() + "//" + filePath;
-        long folderId = systemController.getFolderId(filePath);
+        Long userId = systemController.getUserId(sec.getUserPrincipal().getName());
+        long folderId = systemController.getFolderId(filePath,userId);
+//        filePath = sec.getUserPrincipal().getName() + "//" + filePath;
         if(folderId!=0){
             boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());  
             if(isOwner){
@@ -152,8 +153,8 @@ public class SystemService {
     @POST
     @Path("/unshareFolder")
      public Response unshareFile(@FormParam("filePath") String filePath, @Context SecurityContext sec){
-        
-        String userLogin = sec.getUserPrincipal().getName();
+        Long userId = systemController.getUserId(sec.getUserPrincipal().getName());
+        long folderId = systemController.getFolderId(filePath,userId);
         long folderId = systemController.getFolderId(userLogin + "//" + filePath);
         if(folderId!=0){
             boolean isOwner = systemController.isFolderOwner(folderId, userLogin);    
@@ -181,11 +182,12 @@ public class SystemService {
     @GET
     @Path("/downloadFile/{path}/{fileName}")
     public File downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
-        
+        System.out.println("DOWNLOAD_FILE");
         String login = sec.getUserPrincipal().getName();
         boolean hasPermision = systemController.canBeDownloaded(path, login);
         if(hasPermision) {
-            return systemController.getDirectFilePath(path, fileName);
+            System.out.println("Has permission");
+            return systemController.getDirectFilePath(login, path, fileName);
         }
         return null;
     }
