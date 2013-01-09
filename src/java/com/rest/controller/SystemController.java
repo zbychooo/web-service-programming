@@ -133,7 +133,7 @@ public class SystemController {
         return dateFormat.format(date);
     }
 
-    private Long getUserId(String login) {
+    public Long getUserId(String login) {
 
         long userID = -1;
         try {
@@ -463,14 +463,16 @@ public class SystemController {
         return directory.delete();
     }
 
-    public Long getFolderId(String path) {
+    public Long getFolderId(String path, Long userId) {
 
         System.out.println("shared path: " + path);
         long folderId = 0;
         try {
             DBConnector db = new DBConnector();
-            String sqlQuery = "select id from folders where directPath='" + path + "'";
+            String sqlQuery = "select id from folders as f and users_folders as uf where uf.userId=? and f.name=?";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                statement.setLong(1, userId);
+                statement.setString(2, path);
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     folderId = rs.getLong(1);
@@ -556,7 +558,7 @@ public class SystemController {
     public boolean canBeDownloaded(String path, String login) {
 
         Long userId = this.getUserId(login);
-        Long folderId = this.getFolderId(path);
+        Long folderId = this.getFolderId(path,userId);
         int isOwner = 0;
 
         try {
@@ -571,19 +573,22 @@ public class SystemController {
             }
 
             db.closeConnection();
-
+            System.out.println("IsOwner+ "+isOwner);
             if (isOwner >= 1) {
                 return true;
             }
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(UsersController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println("false");
         return false;
     }
     
-    public File getDirectFilePath(String path, String fileName){
+    public File getDirectFilePath(String login, String path, String fileName){
         //TODO: ?????
-        return new File(MAIN_STORAGE_FOLDER + path + "\\" + fileName);
+        System.out.println(MAIN_STORAGE_FOLDER + login + "//" + path + "//" + fileName);
+        
+        return new File(MAIN_STORAGE_FOLDER + login + "//" + path + "//" + fileName);
     }
     
     

@@ -106,7 +106,7 @@
                                         <c:out value="${file.tagName}" />
                                     </td>
                                     <td>
-                                        <input type="button" id="download" value="D" /> 
+                                        <input type="button" id="download" value="D" onclick="document.location = 'rest/download/${user.login}/${file.fileName}';" /> 
                                     </td>
                                     <td>
                                         <input type="button" id="delete" value="X" /> 
