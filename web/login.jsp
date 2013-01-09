@@ -9,7 +9,7 @@
         <div id="header" >
             <div id="logo">
                 <h1><a href="#">Hamster.net</a></h1>
-                <h2>CSS Absolutely NOT designed by FreeCSSTemplates AND BRUTALLY MODIFIED BY ME WITHOUT GIVING THEM ANY CREDITS</h2>
+                <h2>Best File Storage service</h2>
             </div>
             <div id="menu">
             </div>

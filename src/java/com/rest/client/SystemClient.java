@@ -254,7 +254,7 @@ public class SystemClient {
         webResource = client.resource(URL_LOGIN);
         com.sun.jersey.api.representation.Form form = new Form();
         form.putSingle("j_username", currentUser.getLogin());
-        form.putSingle("j_password", currentUser.getLogin());
+        form.putSingle("j_password", currentUser.getPassword());
         ClientResponse resp = webResource.type("application/x-www-form-urlencoded").post(ClientResponse.class,form);
         
         //get cookie from the response and return it with Requestbuilder

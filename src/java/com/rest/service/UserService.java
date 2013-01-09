@@ -37,7 +37,11 @@ public class UserService {
         if (returnMessage.equals("OK")) {
             usersController.add(login, password, username);
         }
-        return Response.ok().entity("System return message: " + returnMessage).build();
+        try{
+            return Response.seeOther(new URI("../index.jsp")).build();
+        } catch(Exception e){
+            return Response.ok().entity("System return message: " + returnMessage).build();
+        }
     }
 
     @GET
