@@ -14,7 +14,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -103,7 +102,7 @@ public class SystemService {
 
     /**
      * 
-     * @param filePath wysyłamy wg formatu {folderGłówny}//{nazwaPodfolderu}
+     * @param filePath tylko nazwa folderu!!!
      * @param shareLogin
      * @param sec
      * @return 
@@ -112,6 +111,8 @@ public class SystemService {
     @Path("/shareFolder")
     public Response shareFile(@FormParam("filePath") String filePath, @FormParam("shareLogin") String shareLogin, @Context SecurityContext sec) {
         
+        //System.out.println("\n ----->" + filePath + " " + shareLogin);
+        filePath = sec.getUserPrincipal().getName() + "//" + filePath;
         long folderId = systemController.getFolderId(filePath);
         if(folderId!=0){
             boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());  
@@ -119,12 +120,12 @@ public class SystemService {
                 systemController.joinFolderAndUser(folderId, shareLogin, 0);
             }
             else {
-                return Response.ok().entity("user is not owner of this file").build();
+                return Response.ok().entity("You are not owner of this folder").build();
             }
         } else {
-            return Response.ok().entity("cannot get folder id").build();
+            return Response.ok().entity("Cannot get folder id").build();
         }    
-        return Response.ok().entity("ok, folder shared").build();
+        return Response.ok().entity("Folder(s) has been shared.").build();
     }
     
     @POST
