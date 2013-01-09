@@ -43,8 +43,8 @@ public class ClientService {
             request.getSession().setAttribute("remainingSpace", userRemainingSpace);
             
             List<Folder> folders = new ArrayList<>();
-            folders.addAll((List<Folder>)request.getSession().getAttribute("folders"));
-//            folders.addAll(systemClient.getFolderList());
+//            folders.addAll((List<Folder>)request.getSession().getAttribute("folders"));
+            folders.addAll(systemClient.getFolderList());
             request.getSession().setAttribute("folders", folders);
             
             System.out.println("before cfi casting");

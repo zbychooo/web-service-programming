@@ -58,12 +58,12 @@ public class SystemService {
         boolean isCreated = systemController.createFolder(
                 folderName, login);
         
-        String path = login +  "//" + folderName;
+        String path = login +  "\\" + folderName;
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndUser(folderId, login, 1);
             try{
-                return Response.seeOther(new URI("../")).build();
+                return Response.seeOther(new URI("../")).build();                 
             } catch(Exception ex){
                 return Response.ok().entity("Created").build();
             }
@@ -77,10 +77,12 @@ public class SystemService {
     public Response upload(@FormDataParam("file") InputStream in, 
         @FormDataParam("file") FormDataContentDisposition info, 
         @FormDataParam("tag") String tag, @FormDataParam("path") String path,
+        @Context HttpServletRequest request,
         @Context SecurityContext sec) {
 
         String userlogin = sec.getUserPrincipal().getName();
-        path = userlogin + "//" + path; 
+        String folderName = path;
+        path = userlogin + "\\" + folderName; 
         //TODO: sprawdzic czy nie folder usera nie przekracza max. pojemności!!!1
         
         if(userlogin==null){
@@ -96,8 +98,26 @@ public class SystemService {
         // zapisanie informacji o pliku w bazie danych
         Long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tag, path);
         // zapisanie informacji o właścicielu pliku
-        systemController.joinFileAndFolder(fileId, path);
+        systemController.joinFileAndFolder(fileId, folderName);
 
+        try{
+            List<Folder> folders = (List<Folder>)request.getSession().getAttribute("folders");
+            if(folders!=null){
+                    for(Folder f : folders){
+                        if(info.getFileName().equals(f.getName())){
+                            System.out.println("URI: "+new URI("rest/home/"+f.getId()));
+                            return Response.seeOther(new URI("rest/home/"+f.getId())).build();                            
+                        }
+                    }
+                return Response.seeOther(new URI("../")).build();
+                }
+        } catch(Exception ex){
+            try{
+                return Response.seeOther(new URI("../")).build();
+            } catch(Exception e){
+                System.out.println("Exceptions everywhere: "+e.getMessage());
+            }
+        }
         return Response.ok().entity("File is up.").build();
     }
 
@@ -233,16 +253,16 @@ public class SystemService {
         User user = systemController.getUser(sec.getUserPrincipal().getName(), null);
         folders.addAll(systemController.getUserFolders(user));
 //        folders.addAll(systemController.getUserFolders(user,false));
-        for(Folder f : folders){
-            System.out.println("NAME: "+f.getName()+" - "+f.getDateStamp()+" - "+f.getDirectPath());
-            System.out.println("FOL - USER: "+f.getId()+" - "+f.getUser().getLogin()+" - "+f.getUser().getUid());
-            for(UserFile file : f.getFiles()){
-                System.out.println("FILE: "+file.getFileName());
-            }
-            for(User u : f.getShared()){
-                System.out.println("SHUSER: "+u.getLogin()+" - "+u.getUid());
-            }
-        }
+//        for(Folder f : folders){
+//            System.out.println("NAME: "+f.getName()+" - "+f.getDateStamp()+" - "+f.getDirectPath());
+//            System.out.println("FOL - USER: "+f.getId()+" - "+f.getUser().getLogin()+" - "+f.getUser().getUid());
+//            for(UserFile file : f.getFiles()){
+//                System.out.println("FILE: "+file.getFileName());
+//            }
+//            for(User u : f.getShared()){
+//                System.out.println("SHUSER: "+u.getLogin()+" - "+u.getUid());
+//            }
+//        }
         System.out.println("MY FOLDERS "+folders.size());
         return folders;
     }

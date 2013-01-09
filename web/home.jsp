@@ -54,7 +54,7 @@
                         <form id="fileform" action="rest/systemService/uploadFile" method="POST" enctype="multipart/form-data">
                             <input type="file" name="file" /> 
                             <input type="text" name="tag" size="50" value="" placeholder="tag" /> 
-                            <input type="hidden" value="${folders.get(currentFolderIndex).name}" />
+                            <input type="hidden" name="path" value="${folders.get(currentFolderIndex).name}" />
                             <input type="submit" value="upload" />
                         </form>
                         <input type="button" id="sharefoldermenu" value="Share this folder" />
@@ -97,7 +97,7 @@
                                         <c:out value="${file.fileName}" />
                                     </td>
                                     <td>
-                                        <c:out value="${file.fileSize/1000}" /> MB
+                                        <c:out value="${file.fileSize/1000000}" /> MB
                                     </td>
                                     <td>
                                         <c:out value="${file.dateStamp}" />

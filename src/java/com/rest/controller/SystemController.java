@@ -98,8 +98,7 @@ public class SystemController {
     public Long uploadFile(InputStream in, String fileName,
             String path, String userlogin) {
 
-        String fdir = MAIN_STORAGE_FOLDER + path + "//" + fileName;
-        System.out.println("fdir:" + fdir);
+        String fdir = MAIN_STORAGE_FOLDER + path + "\\" + fileName;
         File file = new File(fdir);
 
         if (file.exists()) {
@@ -198,7 +197,7 @@ public class SystemController {
         long folderID = 0;
         try {
             DBConnector db = new DBConnector();
-            String sqlQuery = "select id from folders where directPath='" + path + "'";
+            String sqlQuery = "select id from folders where name='" + path + "'";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
