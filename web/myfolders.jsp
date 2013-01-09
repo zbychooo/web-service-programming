@@ -45,7 +45,7 @@
                     document.getElementById(i).checked=false;
                 }
             }
-            function shareFolder(len)
+            function shareFolder()
             {
                 var shareLogin = document.getElementsByName("friendLogin")[0].value;
                 console.log("login: ", shareLogin);
@@ -128,9 +128,6 @@
                                 <td>
                                     Added
                                 </td>
-                                <!--                                <td>
-                                                                    Shared
-                                                                </td>-->
                                 <td>
                                     Actions
                                 </td>
@@ -151,10 +148,7 @@
                                         <td onclick="document.location = 'rest/home/${counter}';">
                                             <c:out value="${folder.dateStamp}" />
                                         </td>
-    <!--                                    <td onclick="document.location = 'rest/home/${counter}';">
-                                            <input type="checkbox" id="share" checked="${folder.shared.isEmpty()==false}" disabled="true" /> 
-                                        </td>-->
-                                        <td >
+                                        <td>
                                             <input type="button" id="delete" value="X" /> 
                                         </td>
                                     </tr>
