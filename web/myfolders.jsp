@@ -23,15 +23,12 @@
                 else
                     return false
             }
+            
             function select()
             {
-                //                if(document.getElementById(id).checked)
-                //                    document.getElementById(id).checked=true;
-                //                else
-                //                    document.getElementById(id).checked=false;
                 document.getElementById("selectedall").checked=false
-
             }
+            
             function selectAll(len)
             {
                 if(document.getElementById('selectall').checked)
@@ -45,49 +42,50 @@
                     document.getElementById(i).checked=false;
                 }
             }
+            
             function shareFolder()
             {
                 var shareLogin = document.getElementsByName("friendLogin")[0].value;
                 console.log("login: ", shareLogin);
                 var folders = new Array();
-                
+
             <c:set var="counter" value="${0}" /> 
             <c:forEach items="${foldersdm}" var="folder">
-                                                
-                    var i = ${counter};
-                    var isChecked = document.getElementById(i).checked;
-                    var name1 = "${folder.name}";
-                    if(isChecked){
-                        folders.push(name1);
-                    }
-                        
-                    console.log(i, " isChecked: ", isChecked, " name:", name1);
+
+                        var i = ${counter};
+                        var isChecked = document.getElementById(i).checked;
+                        var name1 = "${folder.name}";
+                        if(isChecked){
+                            folders.push(name1);
+                        }
+
+                        console.log(i, " isChecked: ", isChecked, " name:", name1);
                 <c:set var="counter" value="${counter+1}" />
             </c:forEach>
                
-                    for(var j=0; j<folders.length; j++) {
-                        var mypostrequest=new ajaxRequest();
-                        mypostrequest.onreadystatechange=function(){
-                            if (mypostrequest.readyState==4){
-                                if (mypostrequest.status==200 || window.location.href.indexOf("http")==-1){
-                                    document.getElementById("result").innerHTML=mypostrequest.responseText;
-                                }
-                                else{
-                                    alert("An error has occured making the request");
+                        for(var j=0; j<folders.length; j++) {
+                            var mypostrequest=new ajaxRequest();
+                            mypostrequest.onreadystatechange=function(){
+                                if (mypostrequest.readyState==4){
+                                    if (mypostrequest.status==200 || window.location.href.indexOf("http")==-1){
+                                        document.getElementById("result").innerHTML=mypostrequest.responseText;
+                                    }
+                                    else{
+                                        alert("An error has occured making the request");
+                                    }
                                 }
                             }
+                            var parameters="shareLogin="+shareLogin+"&filePath="+folders[j];
+                            mypostrequest.open("POST", "rest/systemService/shareFolder", true);
+                            mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            mypostrequest.send(parameters);
                         }
-                        var parameters="shareLogin="+shareLogin+"&filePath="+folders[j];
-                        mypostrequest.open("POST", "rest/systemService/shareFolder", true);
-                        mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        mypostrequest.send(parameters);
                     }
-                }
                 
-                function unshareFolder(folderName){
-                    console.log("folderName: ", folderName);
+                    function unshareFolder(folderName){
+                        console.log("folderName: ", folderName);
                     
-                    var mypostrequest=new ajaxRequest();
+                        var mypostrequest=new ajaxRequest();
                         mypostrequest.onreadystatechange=function(){
                             if (mypostrequest.readyState==4){
                                 if (mypostrequest.status==200 || window.location.href.indexOf("http")==-1){
@@ -104,7 +102,7 @@
                         mypostrequest.send(parameters);
                     
                     
-                }
+                    }
         </script>
     </head>
     <body>
@@ -131,8 +129,8 @@
                 <div id="content">
                     <div id="fileactions">
                         <form id="fileform" action="rest/systemService/createFolder" method="POST" >
-                            <input type="text" name="folderName" value="Folder Name" />
-                            <input type="submit" id="newfoldermenu" value="New folder" />
+                        <input type="text" name="folderName" value="" />
+                        <input type="submit" id="newfoldermenu" value="New folder"/>
                         </form>
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <br/>
