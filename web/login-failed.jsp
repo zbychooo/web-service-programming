@@ -7,6 +7,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Logowanie - errror</h1>
+        <h1>ERROR: Login has failed!</h1>
+        <h4>Try again and <a href="login.jsp">login again</a>.</h4>
     </body>
 </html>
