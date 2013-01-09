@@ -103,6 +103,26 @@
                     
                     
                     }
+                    
+      function deleteFolder(folderName) {
+                console.log("folderName ", folderName);
+                
+                var mygetrequest=new ajaxRequest();
+                mygetrequest.onreadystatechange=function(){
+                    if (mygetrequest.readyState==4){
+                        if (mygetrequest.status==200 || window.location.href.indexOf("http")==-1){
+                            document.getElementById("result").innerHTML=mygetrequest.responseText;
+                        }
+                        else{
+                            alert("An error has occured making the request: " + mygetrequest.status);
+                        }
+                    }
+                };
+                var fileNameValue=encodeURIComponent(folderName);
+                mygetrequest.open("GET", "rest/systemService/deleteFolder/"+fileNameValue, true);
+                mygetrequest.send(null);
+                
+            }
         </script>
     </head>
     <body>
@@ -169,7 +189,7 @@
                                             <c:out value="${folder.dateStamp}" />
                                         </td>
                                         <td>
-                                            <input type="button" id="delete" value="X" /> 
+                                            <input type="button" id="delete" value="X" onclick="deleteFolder('${folder.name}')"/> 
                                         </td>
                                     </tr>
                                     <c:set var="counter" value="${counter+1}" />
