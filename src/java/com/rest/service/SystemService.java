@@ -50,21 +50,21 @@ public class SystemService {
     @Path("/createFolder")
     @Produces(MediaType.TEXT_PLAIN)
     public Response createFolder(@FormParam("folderName") String folderName, @Context HttpServletRequest request,
-    @Context SecurityContext sec) {
-        
+            @Context SecurityContext sec) {
+
         String login = sec.getUserPrincipal().getName();
 
         boolean isCreated = systemController.createFolder(
                 folderName, login);
-        
-        String path = login +  "//" + folderName;
-        
+
+        String path = login + "//" + folderName;
+
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndUser(folderId, login, 1);
-            try{
-                return Response.seeOther(new URI("../")).build();                 
-            } catch(Exception ex){
+            try {
+                return Response.seeOther(new URI("../")).build();
+            } catch (Exception ex) {
                 return Response.ok().entity("Created").build();
             }
         }
@@ -74,187 +74,187 @@ public class SystemService {
     @POST
     @Path("/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response upload(@FormDataParam("file") InputStream in, 
-        @FormDataParam("file") FormDataContentDisposition info, 
-        @FormDataParam("tag") String tag, @FormDataParam("path") String path,
-        @Context HttpServletRequest request,
-        @Context SecurityContext sec) {
+    public Response upload(@FormDataParam("file") InputStream in,
+            @FormDataParam("file") FormDataContentDisposition info,
+            @FormDataParam("tag") String tag, @FormDataParam("path") String path,
+            @Context HttpServletRequest request,
+            @Context SecurityContext sec) {
 
         String userlogin = sec.getUserPrincipal().getName();
         String folderName = path;
-        path = userlogin + "//" + folderName; 
+        path = userlogin + "//" + folderName;
         //TODO: sprawdzic czy nie folder usera nie przekracza max. pojemności!!!1
-        
-        if(userlogin==null){
+
+        if (userlogin == null) {
             return Response.serverError().build();
         }
-        tag = tag.toUpperCase();            
+        tag = tag.toUpperCase();
         Long fileSize = systemController.uploadFile(in, info.getFileName(), path, userlogin);
-        
-        if (fileSize== -1) {
+
+        if (fileSize == -1) {
             return Response.ok().entity("Error: " + ErrorsController.UPLOAD_ERROR).build();
         }
-        
+
         // zapisanie informacji o pliku w bazie danych
         Long fileId = systemController.addFileInfoToDB(info.getFileName(), fileSize, tag, path);
         // zapisanie informacji o właścicielu pliku
         systemController.joinFileAndFolder(fileId, folderName);
 
-        try{
-            List<Folder> folders = (List<Folder>)request.getSession().getAttribute("folders");
-            if(folders!=null){
-                    for(Folder f : folders){
-                        if(info.getFileName().equals(f.getName())){
-                            System.out.println("URI: "+new URI("rest/home/"+f.getId()));
-                            return Response.seeOther(new URI("rest/home/"+f.getId())).build();                            
-                        }
+        try {
+            List<Folder> folders = (List<Folder>) request.getSession().getAttribute("folders");
+            if (folders != null) {
+                for (Folder f : folders) {
+                    if (info.getFileName().equals(f.getName())) {
+                        System.out.println("URI: " + new URI("rest/home/" + f.getId()));
+                        return Response.seeOther(new URI("rest/home/" + f.getId())).build();
                     }
-                return Response.seeOther(new URI("../")).build();
                 }
-        } catch(Exception ex){
-            try{
                 return Response.seeOther(new URI("../")).build();
-            } catch(Exception e){
-                System.out.println("Exceptions everywhere: "+e.getMessage());
+            }
+        } catch (Exception ex) {
+            try {
+                return Response.seeOther(new URI("../")).build();
+            } catch (Exception e) {
+                System.out.println("Exceptions everywhere: " + e.getMessage());
             }
         }
         return Response.ok().entity("File is up.").build();
     }
 
     /**
-     * 
+     *
      * @param filePath tylko nazwa folderu!!!
      * @param shareLogin
      * @param sec
-     * @return 
+     * @return
      */
     @POST
     @Path("/shareFolder")
     public Response shareFile(@FormParam("filePath") String filePath, @FormParam("shareLogin") String shareLogin, @Context SecurityContext sec) {
-        
+
         //System.out.println("\n ----->" + filePath + " " + shareLogin);
         Long userId = systemController.getUserId(sec.getUserPrincipal().getName());
-        long folderId = systemController.getFolderId(filePath,userId);
+        long folderId = systemController.getFolderId(filePath, userId);
 //        filePath = sec.getUserPrincipal().getName() + "//" + filePath;
-        if(folderId!=0){
-            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());  
-            if(isOwner){
+        if (folderId != 0) {
+            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());
+            if (isOwner) {
                 systemController.joinFolderAndUser(folderId, shareLogin, 0);
-            }
-            else {
+            } else {
                 return Response.ok().entity("You are not owner of this folder").build();
             }
         } else {
             return Response.ok().entity("Cannot get folder id").build();
-        }    
+        }
         return Response.ok().entity("Folder(s) has been shared.").build();
     }
-    
+
     @POST
     @Path("/unshareFolder")
-     public Response unshareFile(@FormParam("filePath") String filePath, @Context SecurityContext sec){
+    public Response unshareFile(@FormParam("filePath") String filePath, @Context SecurityContext sec) {
         Long userId = systemController.getUserId(sec.getUserPrincipal().getName());
-        long folderId = systemController.getFolderId(filePath,userId);
+        long folderId = systemController.getFolderId(filePath, userId);
 //        long folderId = systemController.getFolderId(userLogin + "//" + filePath);
-        if(folderId!=0){
-            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());    
-            if(isOwner){
+        if (folderId != 0) {
+            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());
+            if (isOwner) {
                 systemController.disjoinFolderAndNoOwnerUsers(folderId, sec.getUserPrincipal().getName());
-            }
-            else {
+            } else {
                 return Response.ok().entity("user is not owner of this file").build();
             }
         } else {
             return Response.ok().entity("cannot get folder id").build();
-        }    
+        }
         return Response.ok().entity("Folder has been UNSHARED.").build();
-    }   
-    
+    }
+
     @POST
     @Path("/search")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response search(@FormParam("searchPhrase") String phrase){
-        
+    public Response search(@FormParam("searchPhrase") String phrase) {
+
         ArrayList<UserFile> results = systemController.search(phrase);
         return Response.ok().entity("Results: \n" + results.toString()).build();
-    } 
-    
+    }
+
     @GET
     @Path("/downloadFile/{path}/{fileName}")
-    public File downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public Response downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
         System.out.println("DOWNLOAD_FILE");
         String login = sec.getUserPrincipal().getName();
         boolean hasPermision = systemController.canBeDownloaded(path, login);
         if(hasPermision) {
             System.out.println("Has permission");
-            return systemController.getDirectFilePath(login, path, fileName);
-        }
+            File output = systemController.getDirectFilePath(login, path, fileName);
+            return Response.ok(output).header("Content-Disposition", "attachment; filename="+fileName).build();
+            }
         return null;
     }
-    
+
     @GET
     @Path("/deleteFolder/{folderPath}")
-    public Response deleteFolder(@PathParam("folderPath") String path, @Context SecurityContext sec){
+    public Response deleteFolder(@PathParam("folderPath") String path, @Context SecurityContext sec) {
         path = sec.getUserPrincipal().getName() + "//" + path;
-        
-        
+
+
         boolean isDeleted = systemController.deleteFolderFromDB(path, sec.getUserPrincipal().getName());
-        if(!isDeleted){
+        if (!isDeleted) {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
         isDeleted = systemController.deleteFolder(path);
-        
-        if(!isDeleted){
+
+        if (!isDeleted) {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
-        
+
         return Response.ok().entity("Folder has been deleted.").build();
     }
-    
+
     @GET
     @Path("/deleteFile/{folderPath}/{fileName}")
-    public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+    public Response deleteFile(@PathParam("folderPath") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec) {
 
         String login = sec.getUserPrincipal().getName();
-        path = login + "//" + path; 
+        path = login + "//" + path;
 
         boolean isDeleted = systemController.deleteFileFromDB(path, fileName, login);
         System.out.println("check: " + isDeleted);
-        if(!isDeleted) {
+        if (!isDeleted) {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
         isDeleted = systemController.deleteFile(path, fileName);
-        
-        if(!isDeleted){
+
+        if (!isDeleted) {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
-        
+
         return Response.ok().entity("File has been deleted.").build();
     }
-    
+
     @GET
     @Path("/getRemainingStorageSize")
     @Produces("text/plain")
     public Response getRemainingStorageSize(@Context SecurityContext sec) {
-        
-        try{
+
+        try {
             long folderSize = systemController.getFolderSize(sec.getUserPrincipal().getName());
             long availableSpace = SystemController.MAX_STORAGE - folderSize;
-            Double availableSpaceD = availableSpace / 1000.0;            
-            System.out.println("AVAILABLE: "+folderSize+" - "+availableSpace+" - "+availableSpaceD);
-            
+            Double availableSpaceD = availableSpace / 1000.0;
+            System.out.println("AVAILABLE: " + folderSize + " - " + availableSpace + " - " + availableSpaceD);
+
             return Response.ok().entity(Double.toString(availableSpaceD)).build();
-        } catch(Exception e){
+        } catch (Exception e) {
             return Response.ok().entity("0").build();
         }
     }
-    
+
     @GET
     @Path("/myfolders")
-    @Produces(MediaType.APPLICATION_XML) 
-    public List<Folder> getCurrentUserFolders(@Context SecurityContext sec){
-        List<Folder> folders = new ArrayList<>(); 
-        System.out.println("SEC: "+sec.getUserPrincipal().getName());
+    @Produces(MediaType.APPLICATION_XML)
+    public List<Folder> getCurrentUserFolders(@Context SecurityContext sec) {
+        List<Folder> folders = new ArrayList<>();
+        System.out.println("SEC: " + sec.getUserPrincipal().getName());
         User user = systemController.getUser(sec.getUserPrincipal().getName(), null);
         folders.addAll(systemController.getUserFolders(user));
 //        folders.addAll(systemController.getUserFolders(user,false));
@@ -268,16 +268,15 @@ public class SystemService {
 //                System.out.println("SHUSER: "+u.getLogin()+" - "+u.getUid());
 //            }
 //        }
-        System.out.println("MY FOLDERS "+folders.size());
+        System.out.println("MY FOLDERS " + folders.size());
         return folders;
     }
-    
+
     @GET
     @Path("/myfolderss")
-    @Produces(MediaType.APPLICATION_XML) 
-    public String testGet(@Context SecurityContext sec){
-        
+    @Produces(MediaType.APPLICATION_XML)
+    public String testGet(@Context SecurityContext sec) {
+
         return "bourne";
     }
-    
 }
