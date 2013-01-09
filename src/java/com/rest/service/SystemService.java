@@ -179,13 +179,15 @@ public class SystemService {
 
     @GET
     @Path("/downloadFile/{path}/{fileName}")
-    public File downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public Response downloadFile(@PathParam("path") String path, @PathParam("fileName") String fileName, @Context SecurityContext sec){
         System.out.println("DOWNLOAD_FILE");
         String login = sec.getUserPrincipal().getName();
         boolean hasPermision = systemController.canBeDownloaded(path, login);
         if(hasPermision) {
             System.out.println("Has permission");
-            return systemController.getDirectFilePath(login, path, fileName);
+            File output = systemController.getDirectFilePath(login, path, fileName);
+            return Response.ok(output).header("Content-Disposition", "attachment; filename="+fileName).build();
             }
         return null;
     }
