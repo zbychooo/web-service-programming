@@ -57,7 +57,8 @@ public class SystemService {
         boolean isCreated = systemController.createFolder(
                 folderName, login);
         
-        String path = login +  "\\" + folderName;
+        String path = login +  "//" + folderName;
+        
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndUser(folderId, login, 1);
@@ -81,7 +82,7 @@ public class SystemService {
 
         String userlogin = sec.getUserPrincipal().getName();
         String folderName = path;
-        path = userlogin + "\\" + folderName; 
+        path = userlogin + "//" + folderName; 
         //TODO: sprawdzic czy nie folder usera nie przekracza max. pojemności!!!1
         
         if(userlogin==null){
@@ -154,10 +155,11 @@ public class SystemService {
      public Response unshareFile(@FormParam("filePath") String filePath, @Context SecurityContext sec){
         Long userId = systemController.getUserId(sec.getUserPrincipal().getName());
         long folderId = systemController.getFolderId(filePath,userId);
+        long folderId = systemController.getFolderId(userLogin + "//" + filePath);
         if(folderId!=0){
-            boolean isOwner = systemController.isFolderOwner(folderId, sec.getUserPrincipal().getName());    
+            boolean isOwner = systemController.isFolderOwner(folderId, userLogin);    
             if(isOwner){
-                systemController.disjoinFolderAndNoOwnerUsers(folderId, sec.getUserPrincipal().getName());
+                systemController.disjoinFolderAndNoOwnerUsers(folderId, userLogin);
             }
             else {
                 return Response.ok().entity("user is not owner of this file").build();
@@ -165,7 +167,7 @@ public class SystemService {
         } else {
             return Response.ok().entity("cannot get folder id").build();
         }    
-        return Response.ok().entity("ok, folder UNshared").build();
+        return Response.ok().entity("Folder has been UNSHARED.").build();
     }   
     
     @POST

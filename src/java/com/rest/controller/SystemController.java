@@ -221,7 +221,7 @@ public class SystemController {
     }
 
     public Long addFolderInfoToDB(String folderName, String path) {
-
+        
         long id = 0;
         try {
             DBConnector db = new DBConnector();
