@@ -584,10 +584,8 @@ public class SystemController {
     }
     
     public File getDirectFilePath(String login, String path, String fileName){
-        //TODO: ?????
-        System.out.println(MAIN_STORAGE_FOLDER + login + "//" + path + "//" + fileName);
-        
-        return new File(MAIN_STORAGE_FOLDER + login + "//" + path + "//" + fileName);
+        System.out.println(MAIN_STORAGE_FOLDER + login + "//" + path + "//" + fileName);        
+        return new File(MAIN_STORAGE_FOLDER + login + File.separator + path + File.separator + fileName);
     }
     
     
