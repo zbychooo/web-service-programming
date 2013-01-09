@@ -57,7 +57,8 @@ public class SystemService {
         boolean isCreated = systemController.createFolder(
                 folderName, login);
         
-        String path = login +  "\\" + folderName;
+        String path = login +  "//" + folderName;
+        
         if (isCreated) {
             Long folderId = systemController.addFolderInfoToDB(folderName, path);
             systemController.joinFolderAndUser(folderId, login, 1);
@@ -81,7 +82,7 @@ public class SystemService {
 
         String userlogin = sec.getUserPrincipal().getName();
         String folderName = path;
-        path = userlogin + "\\" + folderName; 
+        path = userlogin + "//" + folderName; 
         //TODO: sprawdzic czy nie folder usera nie przekracza max. pojemności!!!1
         
         if(userlogin==null){

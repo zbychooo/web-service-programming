@@ -57,7 +57,7 @@
                             <input type="hidden" name="path" value="${folders.get(currentFolderIndex).name}" />
                             <input type="submit" value="upload" />
                         </form>
-                        <input type="button" id="sharefoldermenu" value="Share this folder" />
+<!--                        <input type="button" id="sharefoldermenu" value="Share this folder" />-->
                         &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
                         <br/>
                         <p><strong>Current folder: ${folders.get(currentFolderIndex).name}</strong></p>
