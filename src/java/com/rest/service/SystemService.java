@@ -206,7 +206,7 @@ public class SystemService {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
         
-        return Response.ok().entity("ok").build();
+        return Response.ok().entity("Folder has been deleted.").build();
     }
     
     @GET
@@ -215,7 +215,7 @@ public class SystemService {
 
         String login = sec.getUserPrincipal().getName();
         path = login + "//" + path; 
-        
+
         boolean isDeleted = systemController.deleteFileFromDB(path, fileName, login);
         System.out.println("check: " + isDeleted);
         if(!isDeleted) {
@@ -227,7 +227,7 @@ public class SystemService {
             return Response.ok().entity(ErrorsController.DELETION_ERROR).build();
         }
         
-        return Response.ok().entity("ok").build();
+        return Response.ok().entity("File has been deleted.").build();
     }
     
     @GET
