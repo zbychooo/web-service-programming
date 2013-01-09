@@ -134,7 +134,7 @@
                                             <c:out value="${file.fileName}" />
                                         </td>
                                         <td>
-                                            <c:out value="${file.fileSize/1000000}" /> MB
+                                            <c:out value="${file.fileSize/1000}" /> kB
                                         </td>
                                         <td>
                                             <c:out value="${file.dateStamp}" />
