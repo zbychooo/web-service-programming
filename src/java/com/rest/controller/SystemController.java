@@ -464,18 +464,17 @@ public class SystemController {
     }
 
     public Long getFolderId(String path, Long userId) {
-
         System.out.println("shared path: " + path);
         long folderId = 0;
         try {
             DBConnector db = new DBConnector();
-            String sqlQuery = "select id from folders as f and users_folders as uf where uf.userId=? and f.name=?";
+            String sqlQuery = "select * from folders as f, users_folders as uf where uf.userId=? and uf.folderId=f.id and f.name=?";
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 statement.setLong(1, userId);
                 statement.setString(2, path);
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    folderId = rs.getLong(1);
+                    folderId = rs.getLong("folderId");
                 }
                 statement.close();
             }
