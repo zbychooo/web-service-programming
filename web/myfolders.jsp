@@ -262,12 +262,12 @@
                         </li>
                         <li id="search">
                             <h2><b class="text1"> Global search</b></h2>
-                            <form action="rest/systemService/search" method="POST">
+                            <form action="rest/search" method="POST">
                                 <fieldset>
                                     <input type="text" name="searchPhrase" value="" />
                                     <input type="submit" id="searchButton" value="Search" />
-                                    <select id="searchby" >
-                                        <option id="byusers" value="Users" >Users</option>
+                                    <select id="searchby" name="searchby" >
+                                        <option id="byfilename" value="Files" >Files</option>
                                         <option id="bytags" value="Tags" >Tags</option>
                                     </select>
                                 </fieldset>
