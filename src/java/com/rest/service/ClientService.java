@@ -144,12 +144,9 @@ public class ClientService {
         try{
             UsersController uc = new UsersController();       
             User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName()); 
-            System.out.println("Search1 ");
             SystemClient sc = new SystemClient(currentUser,request,response);
-            System.out.println("Search2 ");
             List<SearchResultEntry> result = new ArrayList<>();
             result.addAll(sc.search(searchPhrase, searchby));
-            System.out.println("Search3 ");
             request.getSession().setAttribute("searchResults", result);
             System.out.println("Search in CLientService "+result.size());
             return Response.seeOther(new URI("../search.jsp")).build();

@@ -538,40 +538,46 @@ public class SystemController {
         ArrayList<SearchResultEntry> results = new ArrayList<>();
         try {
             DBConnector db = new DBConnector();
-            Set<Integer> ids = new HashSet<>();
+            Set<Long> ids = new HashSet<>();
             String sqlQuery="";
             if(criteria.equals("Tags")){
-                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, ff.folderId "
+                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, uf.folderId "
                         + "FROM users_folders as uf, folders_files as ff, files as f, folders WHERE uf.userId='"
                         + user.getUid() + "' and uf.folderId=ff.folderId and ff.fileId=f.id and f.tagName LIKE '%" 
                         + phrase + "%' and folders.id=ff.folderId";
                 
             } else if(criteria.equals("Files")){
-                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, ff.folderId "
-                        + "FROM users_folders as uf, folders_files as ff, files as f, folders, users as u WHERE uf.userId='"
+                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, uf.folderId "
+                        + "FROM users_folders as uf, folders_files as ff, files as f, folders WHERE uf.userId='"
                         + user.getUid() + "' and uf.folderId=ff.folderId and ff.fileId=f.id and f.fileName LIKE '%" + phrase 
                         + "%' and folders.id=ff.folderId";
             }
-            System.out.println("SQL: "+sqlQuery.length()+" - "+criteria+" - "+phrase);
+            System.out.println("SQL: "+criteria+" - "+phrase);
+            
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     results.add(new SearchResultEntry(rs.getString("fileName"), rs.getLong("fileSize"),
                             rs.getString("dateStamp"), rs.getString("tagName"), rs.getString("directPath"),
-                            rs.getString("name"), rs.getInt("folderId")));
-                    ids.add(rs.getInt("folderId"));
+                            rs.getString("name"), rs.getLong("folderId")));
+                    ids.add(rs.getLong("folderId"));
+                    System.out.println("== "+rs.getLong("folderId")+" - "+rs.getString("name"));
                 }
                 rs.close();
                 statement.close();
             }
-            for(Integer id : ids){
+            System.out.println("IDS: "+ids.size()+" - "+results.size());
+            for(Long id : ids){
                 sqlQuery = "SELECT * FROM users_folders as uf, users as u WHERE uf.folderId=? and u.id=uf.userId and uf.isOwner='1'";
                 try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
-                    statement.setInt(1, id);
+                    statement.setLong(1, id);
                     ResultSet rs = statement.executeQuery();
                     while (rs.next()) {
+                        System.out.println("found ");
                         for(SearchResultEntry entry : results){
-                            if(id.equals(Integer.valueOf(entry.getFolderId()))){
+                            System.out.println("found "+id+" - "+entry.getFolderId());
+                            if(id.equals(Long.valueOf(entry.getFolderId()))){
+                                System.out.println("exactly: "+id+" - "+rs.getString("login"));
                                 entry.setOwner(new User(rs.getLong("id"),rs.getString("login"),
                                         rs.getString("password"),rs.getString("username"),rs.getString("role")));
                             }
