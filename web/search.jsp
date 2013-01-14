@@ -33,7 +33,7 @@
                         <thead>
                             <tr>
                                 <td></td>
-                                <td class="myfoldersname">
+                                <td>
                                     Name
                                 </td>
                                 <td>
