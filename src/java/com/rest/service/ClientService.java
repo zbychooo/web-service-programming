@@ -111,8 +111,8 @@ public class ClientService {
     }
     
     @GET
-    @Path("/download/{filePath}/{fileName}")
-    public Response download(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName, @Context HttpServletRequest request, 
+    @Path("/download/{login}/{filePath}/{fileName}")
+    public Response download(@PathParam("login") String login, @PathParam("filePath") String filePath, @PathParam("fileName") String fileName, @Context HttpServletRequest request, 
         @Context HttpServletResponse response, @Context SecurityContext sec){
         
         try{
@@ -121,7 +121,7 @@ public class ClientService {
             request.getSession().setAttribute("user", currentUser);       
             
             systemClient = new SystemClient(currentUser,request,response);   
-            File file = systemClient.downloadFile(filePath,fileName);
+            File file = systemClient.downloadFile(login,filePath,fileName);
             
             if(file == null){
                 System.out.println("FILE is null");

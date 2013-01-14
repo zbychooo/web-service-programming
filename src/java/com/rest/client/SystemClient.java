@@ -249,9 +249,9 @@ public class SystemClient {
         return "";
     }
     
-    public File downloadFile(String filePath,String fileName){
+    public File downloadFile(String login, String filePath,String fileName){
         System.out.println("DOWNLOAD()");
-        WebResource.Builder builder = prepareWSRequest("rest/systemService/downloadFile/"+filePath+"/"+fileName);
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/downloadFile/"+login+"/"+filePath+"/"+fileName);
         try{
             File result = builder.get(File.class);
             if(result != null){
