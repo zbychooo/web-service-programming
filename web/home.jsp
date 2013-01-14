@@ -143,7 +143,7 @@
                                             <c:out value="${file.tagName}" />
                                         </td>
                                         <td>
-                                        <input type="button" id="download" value="D" onclick="document.location = 'rest/download/${folders.get(currentFolderIndex).name}/${file.fileName}';" /> 
+                                        <input type="button" id="download" value="D" onclick="document.location = 'rest/download/${folders.get(currentFolderIndex).user.login}/${folders.get(currentFolderIndex).name}/${file.fileName}';" /> 
                                         </td>
                                         <td>
                                             <input type="button" id="delete" value="X" onclick="deleteFile('${file.fileName}','${folders.get(currentFolderIndex).name}')"/> 

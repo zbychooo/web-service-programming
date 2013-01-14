@@ -207,7 +207,7 @@ public class SystemService {
             System.out.println("Has permission");
             File output = systemController.getDirectFilePath(user, path, fileName);
             return Response.ok(output).header("Content-Disposition", "attachment; filename="+fileName).build();
-            }
+        }
         return null;
     }
 
