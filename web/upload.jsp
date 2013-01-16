@@ -5,17 +5,47 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP !TEST! Page</title>
         <script type="text/javascript">
-            function startDownload()          
-            {
-                var url='D:\\RESTCloudStorage\\admin\\widzew\\test1filee.txt';  
-                window.open(url,'Download');
+            function ajaxRequest(){
+                var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"] //activeX versions to check for in IE
+                if (window.ActiveXObject){ //Test for support for ActiveXObject in IE first (as XMLHttpRequest in IE7 is broken)
+                    for (var i=0; i<activexmodes.length; i++){
+                        try{
+                            return new ActiveXObject(activexmodes[i])
+                        }
+                        catch(e){
+                            //suppress error
+                        }
+                    }
+                }
+                else if (window.XMLHttpRequest) // if Mozilla, Safari etc
+                    return new XMLHttpRequest();
+                else
+                    return false
+            }
+            
+            function search(){
+                var searchword = document.getElementsByName("searchPhrase")[0].value;
+                console.log("search word:", searchword);
+                
+                 var mypostrequest=new ajaxRequest();
+                            mypostrequest.onreadystatechange=function(){
+                                if (mypostrequest.readyState==4){
+                                    if (mypostrequest.status==200 || window.location.href.indexOf("http")==-1){
+                                        document.getElementById("result").innerHTML=mypostrequest.responseText;
+                                    }
+                                    else{
+                                        alert("An error has occured making the request");
+                                    }
+                                }
+                            }
+                            var parameters="searchPhrase="+searchword;
+                            mypostrequest.open("POST", "rest/systemService/search", true);
+                            mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            mypostrequest.send(parameters);
             }
         </script>
     </head>
     <body>
-        <script type="text/javascipt">
-setTimeout("startDownload()",5000); //starts download after 5 seconds
-</script>
         <div id="result">testowanie</div>
         <!--        <h1>Upload:</h1>
                 <form action="rest/systemService/uploadFile" method="POST" enctype="multipart/form-data">
@@ -40,7 +70,6 @@ setTimeout("startDownload()",5000); //starts download after 5 seconds
             <!--            <li><a href="rest/systemService/deleteFile/baluty/zaal.txt">delete zaal.txt</a></li>
                         <li><a href="rest/systemService/deleteFolder/baluty">delete folder baluty</a></li>-->
             <li><a href="rest/systemService/downloadFile/baluty/zaal.txt">download zaal.txt</a></li>
-            <li><button onclick="startDownload()">download</button></li>
         </ul>
 
         <!--        
@@ -58,9 +87,9 @@ setTimeout("startDownload()",5000); //starts download after 5 seconds
                 </form>-->
 
         <hr /><h1>Search:</h1>
-        <form action="rest/systemService/search" method="POST">
-            search: <input type="text" name="searchPhrase" size="50" value="" />
-            <input type="submit" value="search" />
-        </form>
+<!--        <form action="rest/systemService/search" method="POST">-->
+            <input type="text" name="searchPhrase" size="50" value="" />
+            <input type="submit" value="search" onclick="search()"/>
+<!--        </form>-->
     </body>
 </html>
