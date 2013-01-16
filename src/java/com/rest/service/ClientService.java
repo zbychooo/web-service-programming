@@ -3,7 +3,9 @@ package com.rest.service;
 import com.rest.client.SystemClient;
 import com.rest.controller.UsersController;
 import com.rest.model.Folder;
+import com.rest.model.SearchResultEntry;
 import com.rest.model.User;
+import com.rest.model.UserFile;
 import com.sun.jersey.spi.resource.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,10 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -57,7 +56,7 @@ public class ClientService {
         }
         //return a page
         try{
-            return Response.temporaryRedirect(new URI("../home.jsp")).build();
+            return Response.seeOther(new URI("../home.jsp")).build();
         } catch(Exception e){
             return Response.ok(":(").build();
         }
@@ -105,15 +104,15 @@ public class ClientService {
         }
         //return a page
         try{
-            return Response.temporaryRedirect(new URI("../myfolders.jsp")).build();
+            return Response.seeOther(new URI("../myfolders.jsp")).build();
         } catch(Exception e){
             return Response.ok(":(").build();
         }
     }
     
     @GET
-    @Path("/download/{filePath}/{fileName}")
-    public Response download(@PathParam("filePath") String filePath, @PathParam("fileName") String fileName, @Context HttpServletRequest request, 
+    @Path("/download/{login}/{filePath}/{fileName}")
+    public Response download(@PathParam("login") String login, @PathParam("filePath") String filePath, @PathParam("fileName") String fileName, @Context HttpServletRequest request, 
         @Context HttpServletResponse response, @Context SecurityContext sec){
         
         try{
@@ -122,7 +121,7 @@ public class ClientService {
             request.getSession().setAttribute("user", currentUser);       
             
             systemClient = new SystemClient(currentUser,request,response);   
-            File file = systemClient.downloadFile(filePath,fileName);
+            File file = systemClient.downloadFile(login,filePath,fileName);
             
             if(file == null){
                 System.out.println("FILE is null");
@@ -135,5 +134,25 @@ public class ClientService {
         }
         
         return null;
+    }
+    
+    @POST
+    @Path("/search")
+    public Response search(@FormParam("searchPhrase") String searchPhrase, @FormParam("searchby") String searchby,
+    @Context HttpServletRequest request, @Context HttpServletResponse response,@Context SecurityContext sec){
+                
+        try{
+            UsersController uc = new UsersController();       
+            User currentUser = (User)uc.getUsers().get(sec.getUserPrincipal().getName()); 
+            SystemClient sc = new SystemClient(currentUser,request,response);
+            List<SearchResultEntry> result = new ArrayList<>();
+            result.addAll(sc.search(searchPhrase, searchby));
+            request.getSession().setAttribute("searchResults", result);
+            System.out.println("Search in CLientService "+result.size());
+            return Response.seeOther(new URI("../search.jsp")).build();
+        } catch(Exception e){
+            System.out.println("Error in Search: "+e.getMessage());
+            return Response.serverError().build();
+        }
     }
 }

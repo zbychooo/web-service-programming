@@ -5,65 +5,6 @@
     <head>
         <title>Hamster.net - Best File Storage service</title>
         <link href="default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript">
-            function ajaxRequest(){
-                var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"] //activeX versions to check for in IE
-                if (window.ActiveXObject){ //Test for support for ActiveXObject in IE first (as XMLHttpRequest in IE7 is broken)
-                    for (var i=0; i<activexmodes.length; i++){
-                        try{
-                            return new ActiveXObject(activexmodes[i])
-                        }
-                        catch(e){
-                            //suppress error
-                        }
-                    }
-                }
-                else if (window.XMLHttpRequest) // if Mozilla, Safari etc
-                    return new XMLHttpRequest();
-                else
-                    return false
-            }
-            
-            function select()
-            {
-                document.getElementById("selectedall").checked=false;
-            }
-            
-            function selectAll(len)
-            {
-                if(document.getElementById('selectall').checked)
-                    for (var i=0;i<len;i++)
-                { 
-                    document.getElementById(i).checked=true;
-                }
-                else
-                    for (var i=0;i<len;i++)
-                { 
-                    document.getElementById(i).checked=false;
-                }
-            }
-            
-            function deleteFile(fileName, filePath) {
-                console.log("fileName ", fileName, " filePath/Folder ", filePath);
-                
-                var mygetrequest=new ajaxRequest();
-                mygetrequest.onreadystatechange=function(){
-                    if (mygetrequest.readyState==4){
-                        if (mygetrequest.status==200 || window.location.href.indexOf("http")==-1){
-                            document.getElementById("result").innerHTML=mygetrequest.responseText;
-                        }
-                        else{
-                            alert("An error has occured making the request: " + mygetrequest.status);
-                        }
-                    }
-                };
-                var fileNameValue=encodeURIComponent(fileName);
-                var filePathValue=encodeURIComponent(filePath);
-                mygetrequest.open("GET", "rest/systemService/deleteFile/"+filePathValue+"/"+fileNameValue, true);
-                mygetrequest.send(null);
-                
-            }
-        </script>
     </head>
     <body>
         <div id="header" >
@@ -87,54 +28,44 @@
             <div id="page">           
                 <!-- start content -->
                 <div id="content">
-                    <div id="fileactions">                        
-                        <form id="fileform" action="rest/systemService/uploadFile" method="POST" enctype="multipart/form-data">
-                            <input type="file" name="file" /> 
-                            <input type="text" name="tag" size="50" value="" placeholder="tag" /> 
-                            <input type="hidden" name="path" value="${folders.get(currentFolderIndex).name}" />
-                            <input type="submit" value="upload" />
-                        </form>
-                        <!--                        <input type="button" id="sharefoldermenu" value="Share this folder" />-->
-                        &nbsp; Free space: <c:out value="${remainingSpace}" /> MB &nbsp;
-                        <br/>
-                        <p><strong>Current folder: ${folders.get(currentFolderIndex).name}</strong></p>
-                    </div>
                     <br/>
-                    <table class="contentTable">
+                    <table class="contentTable" id="searchTable">
                         <thead>
                             <tr>
+                                <td></td>
                                 <td>
-                                    <input type="checkbox" id="selectall" />
-                                </td>
-                                <td class="homefilenamecell" >
                                     Name
                                 </td>
                                 <td>
-                                    Size
+                                    File size
                                 </td>
                                 <td>
                                     Added
                                 </td>
                                 <td>
-                                    Tags
+                                    Tag
                                 </td>
-                                <td colspan="2">
+                                <td>
+                                    Owner
+                                </td>
+                                <td>
                                     Actions
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
-                            <c:if test="${folders.get(currentFolderIndex).files.isEmpty()==false}" >
-                                <c:forEach items="${folders.get(currentFolderIndex).files}" var="file">
+                            <c:set var="counter" value="${0}" /> 
+                            <c:if test="${searchResults.isEmpty()==false}" >
+                                <c:forEach items="${searchResults}" var="file">
                                     <tr>
                                         <td>
-                                            <input type="checkbox" id="select" /> 
+                                            <c:out value="${counter+1}" />
                                         </td>
-                                        <td class="homefilenamecell">
+                                        <td >
                                             <c:out value="${file.fileName}" />
                                         </td>
                                         <td>
-                                            <c:out value="${file.fileSize/1000}" /> kB
+                                            <c:out value="${file.fileSize}" />
                                         </td>
                                         <td>
                                             <c:out value="${file.dateStamp}" />
@@ -143,25 +74,25 @@
                                             <c:out value="${file.tagName}" />
                                         </td>
                                         <td>
-                                        <input type="button" id="download" value="D" onclick="document.location = 'rest/download/${folders.get(currentFolderIndex).user.login}/${folders.get(currentFolderIndex).name}/${file.fileName}';" /> 
+                                            <c:out value="${file.owner.login}" />
                                         </td>
                                         <td>
-                                            <input type="button" id="delete" value="X" onclick="deleteFile('${file.fileName}','${folders.get(currentFolderIndex).name}')"/> 
+                                            <input type="button" id="download" value="D" 
+                                                   onclick="document.location = 'rest/download/${file.owner.login}/${file.folderName}/${file.fileName}';" /> 
                                         </td>
                                     </tr>
+                                    <c:set var="counter" value="${counter+1}" />
                                 </c:forEach>
                             </c:if>
-                            <c:if test="${folders.get(currentFolderIndex).files.isEmpty()==true}">
+                            <c:if test="${searchResults.isEmpty()==true}">
                                 <tr>
                                     <td colspan="5">
-                                        There are no files in this folder.
+                                        There are no files found.
                                     </td>
                                 </tr>
                             </c:if>
                         </tbody>
                     </table>
-                     
-                    <br/>  <div id="result"></div>      
                 </div>
                 <!-- end content -->     
                 <!-- start sidebar -->
@@ -192,7 +123,7 @@
                                     <c:forEach items="${folders}" var="folder">
                                         <c:if test="${folder.shared.isEmpty()==false}" >
                                             <ul>
-                                                <li><a href="rest/home/${counter}">${folder.name}</a></li>
+                                                <li><a href="rest/home/${counter}">${folder.name}</a> <button name="unshareButton" onclick="unshareFolder('${folder.name}')" >Unshare</button></li>
                                             </ul>
                                         </c:if>
                                         <c:set var="counter" value="${counter+1}" />

@@ -242,6 +242,9 @@ input, textarea, select {
 .myfoldersname {
     width: 65%;    
 }
+.searchformname{
+    width: 45%;  
+}
 
 .homefilenamecell {
     width: 50%;  

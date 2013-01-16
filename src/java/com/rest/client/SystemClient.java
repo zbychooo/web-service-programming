@@ -1,15 +1,15 @@
 package com.rest.client;
 
 import com.rest.model.Folder;
+import com.rest.model.SearchResultEntry;
 import com.rest.model.User;
+import com.rest.model.UserFile;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.api.representation.Form;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.Cookie;
@@ -249,9 +249,9 @@ public class SystemClient {
         return "";
     }
     
-    public File downloadFile(String filePath,String fileName){
+    public File downloadFile(String login, String filePath,String fileName){
         System.out.println("DOWNLOAD()");
-        WebResource.Builder builder = prepareWSRequest("rest/systemService/downloadFile/"+filePath+"/"+fileName);
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/downloadFile/"+login+"/"+filePath+"/"+fileName);
         try{
             File result = builder.get(File.class);
             if(result != null){
@@ -290,7 +290,7 @@ public class SystemClient {
              
         if(!wsRequest.isRequestedSessionIdValid()){
             try{
-                wsRequest.login(currentUser.getLogin(), currentUser.getLogin());
+                wsRequest.login(currentUser.getLogin(), currentUser.getPassword());
             }catch(Exception e){
                 System.out.println("Except: "+e.getMessage());
             }
@@ -307,5 +307,17 @@ public class SystemClient {
             builder = builder.cookie(new NewCookie(c.getName(),c.getValue()));
         }
         return builder;
+    }
+    
+    public List<SearchResultEntry> search(String phrase, String criteria){
+        List<SearchResultEntry> result = new ArrayList<>();
+        System.out.println("SEARCH()");
+        WebResource.Builder builder = prepareWSRequest("rest/systemService/search/"+phrase+"/"+criteria);
+        try{
+            result.addAll(builder.get(new GenericType<List<SearchResultEntry>>(){}));
+        } catch(Exception e){
+            System.out.println("Exception in download "+e.getMessage());
+        }
+        return result;
     }
 }
