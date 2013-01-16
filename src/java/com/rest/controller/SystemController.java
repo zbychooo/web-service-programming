@@ -1,6 +1,7 @@
 package com.rest.controller;
 
 import com.rest.model.Folder;
+import com.rest.model.SearchResultEntry;
 import com.rest.model.User;
 import com.rest.model.UserFile;
 import com.utilities.DBConnector;
@@ -17,7 +18,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -530,21 +533,59 @@ public class SystemController {
         }
     }
 
-    public ArrayList<UserFile> search(String phrase) {
+    public ArrayList<SearchResultEntry> search(String phrase, String criteria, User user) {
 
-        ArrayList<UserFile> results = new ArrayList<>();
+        ArrayList<SearchResultEntry> results = new ArrayList<>();
         try {
             DBConnector db = new DBConnector();
-            String sqlQuery = "SELECT * FROM files WHERE tagName LIKE '%" + phrase + "%' OR fileName LIKE '%" + phrase + "%'";
+            Set<Long> ids = new HashSet<>();
+            String sqlQuery="";
+            if(criteria.equals("Tags")){
+                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, uf.folderId "
+                        + "FROM users_folders as uf, folders_files as ff, files as f, folders WHERE uf.userId='"
+                        + user.getUid() + "' and uf.folderId=ff.folderId and ff.fileId=f.id and f.tagName LIKE '%" 
+                        + phrase + "%' and folders.id=ff.folderId";
+                
+            } else if(criteria.equals("Files")){
+                sqlQuery = "SELECT f.filename,f.fileSize,f.dateStamp,f.tagName,folders.name,folders.directPath, uf.folderId "
+                        + "FROM users_folders as uf, folders_files as ff, files as f, folders WHERE uf.userId='"
+                        + user.getUid() + "' and uf.folderId=ff.folderId and ff.fileId=f.id and f.fileName LIKE '%" + phrase 
+                        + "%' and folders.id=ff.folderId";
+            }
+            System.out.println("SQL: "+criteria+" - "+phrase);
+            
             try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    results.add(new UserFile(rs.getLong("id"),
-                            rs.getString("fileName"), rs.getLong("fileSize"),
-                            rs.getString("dateStamp"), rs.getString("tagName"),
-                            rs.getString("directPath")));
+                    results.add(new SearchResultEntry(rs.getString("fileName"), rs.getLong("fileSize"),
+                            rs.getString("dateStamp"), rs.getString("tagName"), rs.getString("directPath"),
+                            rs.getString("name"), rs.getLong("folderId")));
+                    ids.add(rs.getLong("folderId"));
+                    System.out.println("== "+rs.getLong("folderId")+" - "+rs.getString("name"));
                 }
+                rs.close();
                 statement.close();
+            }
+            System.out.println("IDS: "+ids.size()+" - "+results.size());
+            for(Long id : ids){
+                sqlQuery = "SELECT * FROM users_folders as uf, users as u WHERE uf.folderId=? and u.id=uf.userId and uf.isOwner='1'";
+                try (PreparedStatement statement = db.getConnection().prepareStatement(sqlQuery)) {
+                    statement.setLong(1, id);
+                    ResultSet rs = statement.executeQuery();
+                    while (rs.next()) {
+                        System.out.println("found ");
+                        for(SearchResultEntry entry : results){
+                            System.out.println("found "+id+" - "+entry.getFolderId());
+                            if(id.equals(Long.valueOf(entry.getFolderId()))){
+                                System.out.println("exactly: "+id+" - "+rs.getString("login"));
+                                entry.setOwner(new User(rs.getLong("id"),rs.getString("login"),
+                                        rs.getString("password"),rs.getString("username"),rs.getString("role")));
+                            }
+                        }
+                    }
+                    rs.close();
+                    statement.close();
+                }
             }
             db.closeConnection();
 

@@ -14,9 +14,9 @@ public class DBConnector {
 
     //DO NOT CREATE SETTERS AND/OR GETTERS FOR THESE FIELDS!
     private String driverName = "com.mysql.jdbc.Driver";
-    private String url = "jdbc:mysql://www.a2l.pl:3306/a2l_restcloud";
-    private String uid = "a2l_restcloud";
-    private String pwd = "restcloud!!2012";
+    private String url = "jdbc:mysql://localhost:3306/a2l_restcloud";//"jdbc:mysql://www.a2l.pl:3306/a2l_restcloud";
+    private String uid = "root";//"a2l_restcloud";
+    private String pwd = "";//"restcloud!!2012";
     //---------------------------------------------------------
     private Connection connection;
 

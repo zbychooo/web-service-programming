@@ -3,6 +3,7 @@ package com.rest.service;
 import com.rest.controller.ErrorsController;
 import com.rest.controller.SystemController;
 import com.rest.model.Folder;
+import com.rest.model.SearchResultEntry;
 import com.rest.model.User;
 import com.rest.model.UserFile;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -168,13 +169,15 @@ public class SystemService {
         return Response.ok().entity("Folder has been UNSHARED.").build();
     }
 
-    @POST
-    @Path("/search")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response search(@FormParam("searchPhrase") String phrase) {
-
-        ArrayList<UserFile> results = systemController.search(phrase);
-        return Response.ok().entity("Results: \n" + results.toString()).build();
+    @GET
+    @Path("/search/{phrase}/{criteria}")
+    @Produces(MediaType.APPLICATION_XML)
+    public List<SearchResultEntry> search(@PathParam("phrase") String phrase, @PathParam("criteria") String criteria
+            ,@Context SecurityContext sec) {
+        
+        User user = this.systemController.getUser(sec.getUserPrincipal().getName(),null);
+        ArrayList<SearchResultEntry> results = systemController.search(phrase,criteria,user);
+        return results;
     }
 
     @GET
@@ -189,6 +192,22 @@ public class SystemService {
             File output = systemController.getDirectFilePath(login, path, fileName);
             return Response.ok(output).header("Content-Disposition", "attachment; filename="+fileName).build();
             }
+        return null;
+    }
+    
+    @GET
+    @Path("/downloadFile/{user}/{path}/{fileName}")
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public Response downloadFile2(@PathParam("user") String user, @PathParam("path") String path, 
+        @PathParam("fileName") String fileName, @Context SecurityContext sec){
+        System.out.println("DOWNLOAD_FILE2");
+        String login = sec.getUserPrincipal().getName();
+        boolean hasPermision = systemController.canBeDownloaded(path, login);
+        if(hasPermision) {
+            System.out.println("Has permission");
+            File output = systemController.getDirectFilePath(user, path, fileName);
+            return Response.ok(output).header("Content-Disposition", "attachment; filename="+fileName).build();
+        }
         return null;
     }
 
